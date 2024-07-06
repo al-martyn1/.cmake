@@ -4,5 +4,28 @@
 
 Добавление в проект: `git submodule add https://github.com/al-martyn1/.cmake.git`
 
+При клонировании проекта надо выполнить:
+```
+# для инициализации локального конфигурационного файла
+git submodule init
+# для получения всех данных этого проекта и извлечения соответствующего коммита, указанного в основном проекте.
+git submodule update 
+```
 
+Для автоматической инициализации и подтягивания сабмодулей при клонировании проекта можно выполнить:
+```
+git clone --recurse-submodules YOU_PROJECT_ORIGIN
+```
+
+При обновлении существующего проекта до версии с сабмодулями выполняем:
+```
+git submodule update --init
+# или
+git submodule update --init --recursive
+```
+
+Обновляем так:
+```
+git submodule update --remote
+```
 
