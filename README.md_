@@ -1,0 +1,14 @@
+---
+Title: UMBA CMake
+---
+
+Добавление в проект: `git submodule add https://github.com/al-martyn1/.cmake.git`
+
+
+# Замечания по использованию внешних библиотек
+
+#!insert{doc,raise=-1} md_/using_boost.md_
+
+
+#!insert{doc,raise=-1} md_/submodules.md_
+
