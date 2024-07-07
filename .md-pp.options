@@ -1,0 +1,5 @@
+--document-language=russian
+--processing-options=no-meta-data
+--processing-options=transliterate-generated-filenames
+--batch-page-index-file=page_index.md
+--processing-options=generate-toc
