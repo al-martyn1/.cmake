@@ -2,6 +2,8 @@
 Title: UMBA CMake (umba.cmake)
 ---
 
+# Быстрый старт
+
 Добавление в проект целиком, как подмодуль:
 ```
 git submodule add https://github.com/al-martyn1/.cmake.git
