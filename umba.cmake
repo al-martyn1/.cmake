@@ -127,6 +127,27 @@ function(umba_configure_boost)
 endfunction()
 
 
+### Trees
+
+function(umba_make_sources_tree SRC_ROOT SRCS HDRS RCSRCS)
+
+    if(SRCS)
+        source_group(TREE ${SRC_ROOT} PREFIX "Sources" FILES ${SRCS})
+    endif()
+
+    if(HDRS)
+        source_group(TREE ${SRC_ROOT} PREFIX "Headers" FILES ${HDRS})
+    endif()
+
+    if(RCSRCS)
+        source_group(TREE ${SRC_ROOT} PREFIX "Resources" FILES ${RCSRCS})
+    endif()
+
+endfunction()
+
+
+
+
 ### Target options
 
 # UNICODE/MBCS/DBCS
@@ -151,7 +172,7 @@ function(umba_add_target_options TARGET)
 
         #message("  ARGV${index}: ${ARGV${index}}")
 
-        if(NOTICE${ARGV${index}})
+        if(NOT ${ARGV${index}})
 
         elseif(${ARGV${index}} STREQUAL "UNICODE")
             if(WIN32)
