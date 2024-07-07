@@ -108,17 +108,27 @@ function(umba_configure_boost)
 
     math(EXPR maxArgN "${ARGC} - 1")
 
-    foreach(index RANGE 0 ${maxArgN} 1)
+    foreach(_index RANGE 0 ${maxArgN} 1)
 
-        if(NOT ${ARGV${index}})
+        set(CURARG ${ARGV${_index}})
 
-        elseif(${ARGV${index}} STREQUAL "STATIC_LIBS")
+        if(NOT CURARG)
+            message("umba_configure_boost: NULL Argument at pos: ${_index} (${CURARG}) (1)")
+            continue()
+        endif()
+
+        if(${CURARG} STREQUAL "")
+            message("umba_configure_boost: NULL Argument at pos: ${_index} (${CURARG}) (2)")
+            continue()
+        endif()
+
+        if(${CURARG} STREQUAL "STATIC_LIBS" OR ${CURARG} STREQUAL "UMBA_STATIC_LIBS")
             set(Boost_USE_STATIC_LIBS ON) 
-        elseif(${ARGV${index}} STREQUAL "MULTITHREADED")
+        elseif(${CURARG} STREQUAL "MULTITHREADED")
             # no mean, option is set to ON by default
-        elseif(${ARGV${index}} STREQUAL "SINGLETHREADED")
+        elseif(${CURARG} STREQUAL "SINGLETHREADED")
             set(Boost_USE_MULTITHREADED OFF)  
-        elseif(${ARGV${index}} STREQUAL "STATIC_RUNTIME" OR ${ARGV${index}} STREQUAL "UMBA_STATIC_RUNTIME")
+        elseif(${CURARG} STREQUAL "STATIC_RUNTIME" OR ${CURARG} STREQUAL "UMBA_STATIC_RUNTIME")
             set(Boost_USE_STATIC_RUNTIME ON) 
         endif()
 
@@ -165,16 +175,24 @@ function(umba_add_target_options TARGET)
     # https://jeremimucha.com/2021/02/cmake-functions-and-macros/
 
     #math(EXPR indices "${ARGC} - 1")
-    #foreach(index RANGE ${indices})
+    #foreach(_index RANGE ${indices})
 
     math(EXPR maxArgN "${ARGC} - 1")
-    foreach(index RANGE 1 ${maxArgN} 1)
+    foreach(_index RANGE 1 ${maxArgN} 1)
 
-        #message("  ARGV${index}: ${ARGV${index}}")
+        set(CURARG ${ARGV${_index}})
 
-        if(NOT ${ARGV${index}})
+        if(NOT CURARG)
+            message("umba_add_target_options: NULL Argument at pos: ${_index} (${CURARG}) (1)")
+            continue()
+        endif()
 
-        elseif(${ARGV${index}} STREQUAL "UNICODE")
+        if(${CURARG} STREQUAL "")
+            message("umba_add_target_options: NULL Argument at pos: ${_index} (${CURARG}) (2)")
+            continue()
+        endif()
+
+        if(${CURARG} STREQUAL "UNICODE")
             if(WIN32)
 
                 # Common for all
@@ -191,7 +209,7 @@ function(umba_add_target_options TARGET)
                 endif()
             endif()
 
-        elseif(${ARGV${index}} STREQUAL "SRCUTF8" OR ${ARGV${index}} STREQUAL "UTF8SRC" OR ${ARGV${index}} STREQUAL "UTF8_SRC" OR ${ARGV${index}} STREQUAL "SRC_UTF8")
+        elseif(${CURARG} STREQUAL "SRCUTF8" OR ${CURARG} STREQUAL "UTF8SRC" OR ${CURARG} STREQUAL "UTF8_SRC" OR ${CURARG} STREQUAL "SRC_UTF8")
             if(WIN32)
                 if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
                     message(NOTICE "Add SRCUTF8 options for Clang")
@@ -206,7 +224,7 @@ function(umba_add_target_options TARGET)
                 endif()
             endif()
 
-        elseif(${ARGV${index}} STREQUAL "UTF8")
+        elseif(${CURARG} STREQUAL "UTF8")
             if(WIN32)
                 if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
                     message(NOTICE "Add UTF8 options for Clang")
@@ -220,7 +238,7 @@ function(umba_add_target_options TARGET)
                 endif()
             endif()
 
-        elseif(${ARGV${index}} STREQUAL "CONSOLE")
+        elseif(${CURARG} STREQUAL "CONSOLE")
             if(WIN32)
 
                 # Common for all
@@ -238,7 +256,7 @@ function(umba_add_target_options TARGET)
                 endif()
             endif()
 
-        elseif(${ARGV${index}} STREQUAL "WINDOWS")
+        elseif(${CURARG} STREQUAL "WINDOWS")
             if(WIN32)
 
                 # Common for all
@@ -256,7 +274,7 @@ function(umba_add_target_options TARGET)
                 endif()
             endif()
 
-        elseif(${ARGV${index}} STREQUAL "BIGOBJ")
+        elseif(${CURARG} STREQUAL "BIGOBJ")
             if(WIN32)
                 if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
                     message(NOTICE "Add BIGOBJ options for Clang")
@@ -269,7 +287,7 @@ function(umba_add_target_options TARGET)
                 endif()
             endif()
 
-        elseif(${ARGV${index}} STREQUAL "STATIC_RUNTIME" OR ${ARGV${index}} STREQUAL "UMBA_STATIC_RUNTIME")
+        elseif(${CURARG} STREQUAL "STATIC_RUNTIME" OR ${CURARG} STREQUAL "UMBA_STATIC_RUNTIME")
             if(WIN32)
                 # Под винду разве не все компиляторы используют MSVC ABI?
                 set_property(TARGET ${TARGET} PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
@@ -285,7 +303,7 @@ function(umba_add_target_options TARGET)
                 #endif()
             endif()
 
-        endif() # if(${ARGV${index}}
+        endif() # if(${CURARG}
 
     endforeach()
 
