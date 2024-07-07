@@ -3,18 +3,26 @@ include_guard(GLOBAL)
 # set(UMBA_USE_BOOST       ON)
 # set(UMBA_USE_BOOST_FETCH ON)
 # set(UMBA_STATIC_RUNTIME  ON)
+# set(UMBA_BOOST_CMAKE_FETCH_URL D:/boost-1.84.0.tar.xz) # https://github.com/boostorg/boost/releases/download/boost-1.84.0/boost-1.84.0.tar.xz #URL_MD5 893b5203b862eb9bbd08553e24ff146a
 
-
-if(UMBA_USE_BOOST)
+if(UMBA_USE_BOOST OR UMBA_USE_BOOST_FETCH)
 
     if(UMBA_USE_BOOST_FETCH)
+
+        if(NOT UMBA_BOOST_CMAKE_FETCH_URL)
+            if(DEFINED ENV{BOOST_CMAKE_FETCH_URL})
+                set(UMBA_BOOST_CMAKE_FETCH_URL "$ENV{BOOST_CMAKE_FETCH_URL}")
+            endif()
+        endif()
+
+        if(NOT UMBA_BOOST_CMAKE_FETCH_URL)
+            message(FATAL_ERROR "UMBA_USE_BOOST_FETCH is set, but UMBA_BOOST_CMAKE_FETCH_URL is not set, nor BOOST_CMAKE_FETCH_URL environment variable")
+        endif()
     
         include(FetchContent)
         FetchContent_Declare(
           Boost
-          #URL https://github.com/boostorg/boost/releases/download/boost-1.84.0/boost-1.84.0.tar.xz
-          URL D:/boost-1.84.0.tar.xz
-          #URL_MD5 893b5203b862eb9bbd08553e24ff146a
+          URL ${UMBA_BOOST_CMAKE_FETCH_URL}
           DOWNLOAD_EXTRACT_TIMESTAMP ON
         )
         FetchContent_MakeAvailable(Boost)
@@ -26,12 +34,14 @@ if(UMBA_USE_BOOST)
                 set(Boost_INCLUDE_DIR "$ENV{BOOST_ROOT}")
             endif()
         endif()
+
+        if(NOT Boost_INCLUDE_DIR)
+            message(FATAL_ERROR "UMBA_USE_BOOST is set, but Boost_INCLUDE_DIR is not set, nor BOOST_ROOT environment variable")
+        endif()
     
         if(Boost_INCLUDE_DIR)
-    
             find_package(Boost)
             include_directories(${Boost_INCLUDE_DIRS})
-    
         endif()
     
     endif()
