@@ -49,6 +49,17 @@ if(UMBA_USE_BOOST OR UMBA_USE_BOOST_FETCH)
 endif()
 
 
+# https://stackoverflow.com/questions/10113017/setting-the-msvc-runtime-in-cmake
+# https://cmake.org/cmake/help/latest/prop_tgt/MSVC_RUNTIME_LIBRARY.html
+# set_property(TARGET foo PROPERTY
+#  MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+# https://cmake.org/cmake/help/git-stage/variable/CMAKE_MSVC_RUNTIME_LIBRARY.html
+# https://cmake.org/cmake/help/git-stage/manual/cmake-generator-expressions.7.html#manual:cmake-generator-expressions(7)
+# set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+# MultiThreaded$<$<CONFIG:Debug>:Debug>DLL
+
+# linux
+# https://stackoverflow.com/questions/35994339/link-linux-c-application-statically-via-cmake-2-8
 if(UMBA_STATIC_RUNTIME)
     # For use as ${UMBA_STATIC_RUNTIME} when calling umba_add_target_options
     set(UMBA_STATIC_RUNTIME "UMBA_STATIC_RUNTIME")
