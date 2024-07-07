@@ -77,9 +77,9 @@ endif()
 
 ### Boost
 # Defaults for Boost
-set(Boost_USE_STATIC_LIBS OFF) 
-set(Boost_USE_MULTITHREADED ON)  
-set(Boost_USE_STATIC_RUNTIME OFF) 
+# set(Boost_USE_STATIC_LIBS OFF) 
+#set(Boost_USE_MULTITHREADED ON)  
+#set(Boost_USE_STATIC_RUNTIME OFF) 
 
 
 # D:\CMake\share\cmake-3.29\Modules\FindBoost.cmake

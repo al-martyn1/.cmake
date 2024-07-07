@@ -12,9 +12,11 @@ git submodule add https://github.com/al-martyn1/.cmake.git
 wget https://raw.githubusercontent.com/al-martyn1/.cmake/main/umba.cmake
 ```
 
+#!insert{doc,raise=0} md_/configuration_vars.md_
+#!insert{doc,raise=0} md_/functions.md_
+
 
 # Замечания по использованию внешних библиотек
-
 #!insert{doc,raise=-1} md_/using_boost.md_
 
 
