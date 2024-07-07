@@ -1,10 +1,15 @@
 # UMBA CMake (umba.cmake)
 
+  - [Конфигурационные переменные](#user-content-конфигурационные-переменные)
+  - [Функции](#user-content-функции)
+    - [Функция umba_configure_boost](#user-content-функция-umba_configure_boost)
+    - [Функция umba_add_target_options](#user-content-функция-umba_add_target_options)
+    - [Функция umba_make_sources_tree](#user-content-функция-umba_make_sources_tree)
   - [Замечания по использованию внешних библиотек](#user-content-замечания-по-использованию-внешних-библиотек)
     - [Boost](#user-content-boost)
       - [Boost в режиме header-only](#user-content-boost-в-режиме-header-only)
       - [Настройка системы для использования Boost в режиме header-only](#user-content-настройка-системы-для-использования-boost-в-режиме-header-only)
-      - [Boost в режиме FetchContent](#user-content-boost-в-режиме-fetchcontent)
+      - [Использование Boost в режиме FetchContent](#user-content-использование-boost-в-режиме-fetchcontent)
   - [Справка по использованию подмодулей](#user-content-справка-по-использованию-подмодулей)
 
 
@@ -17,6 +22,62 @@ git submodule add https://github.com/al-martyn1/.cmake.git
 ```
 wget https://raw.githubusercontent.com/al-martyn1/.cmake/main/umba.cmake
 ```
+
+# Конфигурационные переменные
+
+ - `UMBA_STATIC_RUNTIME` - использовать статический рантайм при сборке приложения.
+
+
+
+# Функции
+
+## Функция umba_configure_boost
+
+Используется для настройки библиотеки `Boost` в режиме `FetchContent`.
+
+```cmake
+function(umba_configure_boost BOOST_OPTIONS...)
+```
+
+`BOOST_OPTIONS` - опции настройки, могут принимать следующие значения:
+ - `STATIC_LIBS` - использовать статические библиотеки;
+ - `MULTITHREADED` - использовать многопоточную версию библиотеки;
+ - `SINGLETHREADED` - использовать одноопоточную версию библиотеки;
+ - `STATIC_RUNTIME` - использовать статически линкуемый C/C++ рантайм.
+
+
+## Функция umba_add_target_options
+
+Используется для настройки исполняемого файла.
+
+```cmake
+function(umba_add_target_options TARGET OPTIONS...)
+```
+
+`OPTIONS` - опции настройки, могут принимать следующие значения:
+ - `UNICODE` - создавать UNICODE приложение;
+ - `CONSOLE` - создавать консольное приложение;
+ - `WINDOWS` - создавать оконное приложение;
+ - `BIGOBJ` - используется при наличии большой базы шалонного/inline кода;
+ - `UTF8` - использовать кодировку UTF8 в исходниках.
+
+
+## Функция umba_make_sources_tree
+
+Используется, чтобы разложить исходники по группам "Sources"/"Headers"/"Resources".
+Применяется при генерации в проектные файлы MSVS (или аналогичные).
+
+```cmake
+function(umba_make_sources_tree SRC_ROOT SRCS HDRS RCSRCS)
+```
+
+Аргументы:
+ - `SRC_ROOT` - корень, относительно которого будут формироваться имена в дереве;
+ - `SRCS` - файлы с исходными текстами;
+ - `HDRS` - заголовочные файлы;
+ - `RCSRCS` - файлы ресурсов.
+
+Если что-то не задано, то следует вставить пустое значение `""`.
 
 
 # Замечания по использованию внешних библиотек
@@ -60,10 +121,10 @@ set(Boost_INCLUDE_DIR "Path/to/boost")
 BOOST_ROOT=D:\boost_1_85_0
 ```
 
-### Boost в режиме FetchContent
+### Использование Boost в режиме FetchContent
 
 В данном режиме вся библиотека `Boost` подключается в текущий проект, 
-и к использованию становяться доступны все библиотеки, в т.ч. и те, которые требуют компиляции
+и к использованию становятся доступны все библиотеки, в т.ч. и те, которые требуют компиляции
 из исходных кодов.
 
 Данный режим включается установкой переменной `UMBA_USE_BOOST_FETCH` до включения данного файла:
@@ -78,7 +139,7 @@ include(${CMAKE_CURRENT_LIST_DIR}/.cmake/umba.cmake)
 при генерации сборочных скриптов (до нескольких минут).
 
 В переменной `UMBA_BOOST_CMAKE_FETCH_URL` можно задать адрес архива для скачивания.
-По умолчанию используется `https://github.com/boostorg/boost/releases/download/boost-1.85.0/boost-1.85.0-cmake.tar.xz`.
+По умолчанию используется адрес архива `https://github.com/boostorg/boost/releases/download/boost-1.85.0/boost-1.85.0-cmake.tar.xz`.
 
 Если переменная `UMBA_BOOST_CMAKE_FETCH_URL` не задана, производится попытка получить адрес архива из
 переменной окружения `BOOST_CMAKE_FETCH_URL`.
@@ -86,6 +147,7 @@ include(${CMAKE_CURRENT_LIST_DIR}/.cmake/umba.cmake)
 Для того, чтобы исключить обращение к сети при каждой генерации файлов сборки, можно сохранить этот файл локально:
 ```
 cd d:
+d:
 wget https://github.com/boostorg/boost/releases/download/boost-1.85.0/boost-1.85.0-cmake.tar.xz
 ```
 
