@@ -37,10 +37,10 @@ set(Boost_INCLUDE_DIR "Path/to/boost")
 BOOST_ROOT=D:\boost_1_85_0
 ```
 
-## Boost в режиме FetchContent
+## Использование Boost в режиме FetchContent
 
 В данном режиме вся библиотека `Boost` подключается в текущий проект, 
-и к использованию становяться доступны все библиотеки, в т.ч. и те, которые требуют компиляции
+и к использованию становятся доступны все библиотеки, в т.ч. и те, которые требуют компиляции
 из исходных кодов.
 
 Данный режим включается установкой переменной `UMBA_USE_BOOST_FETCH` до включения данного файла:
@@ -55,7 +55,7 @@ include(${CMAKE_CURRENT_LIST_DIR}/.cmake/umba.cmake)
 при генерации сборочных скриптов (до нескольких минут).
 
 В переменной `UMBA_BOOST_CMAKE_FETCH_URL` можно задать адрес архива для скачивания.
-По умолчанию используется `https://github.com/boostorg/boost/releases/download/boost-1.85.0/boost-1.85.0-cmake.tar.xz`.
+По умолчанию используется адрес архива `https://github.com/boostorg/boost/releases/download/boost-1.85.0/boost-1.85.0-cmake.tar.xz`.
 
 Если переменная `UMBA_BOOST_CMAKE_FETCH_URL` не задана, производится попытка получить адрес архива из
 переменной окружения `BOOST_CMAKE_FETCH_URL`.
@@ -63,6 +63,7 @@ include(${CMAKE_CURRENT_LIST_DIR}/.cmake/umba.cmake)
 Для того, чтобы исключить обращение к сети при каждой генерации файлов сборки, можно сохранить этот файл локально:
 ```
 cd d:
+d:
 wget https://github.com/boostorg/boost/releases/download/boost-1.85.0/boost-1.85.0-cmake.tar.xz
 ```
 
