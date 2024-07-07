@@ -2,9 +2,9 @@
 
   - [Конфигурационные переменные](#user-content-конфигурационные-переменные)
   - [Функции](#user-content-функции)
-    - [Функция umba_configure_boost](#user-content-функция-umba_configure_boost)
     - [Функция umba_add_target_options](#user-content-функция-umba_add_target_options)
     - [Функция umba_make_sources_tree](#user-content-функция-umba_make_sources_tree)
+    - [Функция umba_configure_boost](#user-content-функция-umba_configure_boost)
   - [Замечания по использованию внешних библиотек](#user-content-замечания-по-использованию-внешних-библиотек)
     - [Boost](#user-content-boost)
       - [Boost в режиме header-only](#user-content-boost-в-режиме-header-only)
@@ -25,25 +25,13 @@ wget https://raw.githubusercontent.com/al-martyn1/.cmake/main/umba.cmake
 
 # Конфигурационные переменные
 
+Конфигурационные переменные следует задавать до подключения данного (`umba.cmake`) файла.
+
  - `UMBA_STATIC_RUNTIME` - использовать статический рантайм при сборке приложения.
 
 
 
 # Функции
-
-## Функция umba_configure_boost
-
-Используется для настройки библиотеки `Boost` в режиме `FetchContent`.
-
-```cmake
-function(umba_configure_boost BOOST_OPTIONS...)
-```
-
-`BOOST_OPTIONS` - опции настройки, могут принимать следующие значения:
- - `STATIC_LIBS` - использовать статические библиотеки;
- - `MULTITHREADED` - использовать многопоточную версию библиотеки;
- - `SINGLETHREADED` - использовать одноопоточную версию библиотеки;
- - `STATIC_RUNTIME` - использовать статически линкуемый C/C++ рантайм.
 
 
 ## Функция umba_add_target_options
@@ -78,6 +66,23 @@ function(umba_make_sources_tree SRC_ROOT SRCS HDRS RCSRCS)
  - `RCSRCS` - файлы ресурсов.
 
 Если что-то не задано, то следует вставить пустое значение `""`.
+
+
+## Функция umba_configure_boost
+
+Используется для настройки библиотеки `Boost` в режиме `FetchContent`.
+
+```cmake
+function(umba_configure_boost BOOST_OPTIONS...)
+```
+
+`BOOST_OPTIONS` - опции настройки, могут принимать следующие значения:
+ - `STATIC_LIBS` - использовать статические библиотеки;
+ - `MULTITHREADED` - использовать многопоточную версию библиотеки;
+ - `SINGLETHREADED` - использовать одноопоточную версию библиотеки;
+ - `STATIC_RUNTIME` - использовать статически линкуемый C/C++ рантайм.
+
+
 
 
 # Замечания по использованию внешних библиотек
