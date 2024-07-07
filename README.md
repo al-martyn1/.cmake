@@ -4,7 +4,7 @@
     - [Boost](#user-content-boost)
       - [Boost в режиме header-only](#user-content-boost-в-режиме-header-only)
       - [Настройка системы для использования Boost в режиме header-only](#user-content-настройка-системы-для-использования-boost-в-режиме-header-only)
-    - [Справка по использованию подмодулей](#user-content-справка-по-использованию-подмодулей)
+  - [Справка по использованию подмодулей](#user-content-справка-по-использованию-подмодулей)
 
 
 Добавление в проект: `git submodule add https://github.com/al-martyn1/.cmake.git`
@@ -17,7 +17,7 @@
 Для использования библиотек `Boost` надо перед подключением данного файла включить использование `Boost`:
 
 ```cmake
-set(UMBA_USE_BOOST       ON)
+set(UMBA_USE_BOOST ON)
 ```
 
 ### Boost в режиме header-only
@@ -60,7 +60,7 @@ set(UMBA_BOOST_CMAKE_FETCH_URL D:/boost-1.84.0.tar.xz) # https://github.com/boos
 
 
 
-## Справка по использованию подмодулей
+# Справка по использованию подмодулей
 
 Pro Git : [Инструменты Git - Подмодули](https://git-scm.com/book/ru/v2/%D0%98%D0%BD%D1%81%D1%82%D1%80%D1%83%D0%BC%D0%B5%D0%BD%D1%82%D1%8B-Git-%D0%9F%D0%BE%D0%B4%D0%BC%D0%BE%D0%B4%D1%83%D0%BB%D0%B8)
 
