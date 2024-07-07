@@ -1,2 +1,2 @@
 # Перечень страниц
-   - [UMBA CMake](README.md)
+   - [UMBA CMake (umba.cmake)](README.md)

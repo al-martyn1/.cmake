@@ -4,6 +4,7 @@ include_guard(GLOBAL)
 # set(UMBA_USE_BOOST_FETCH ON)
 # set(UMBA_STATIC_RUNTIME  ON)
 # set(UMBA_BOOST_CMAKE_FETCH_URL D:/boost-1.84.0.tar.xz) # https://github.com/boostorg/boost/releases/download/boost-1.84.0/boost-1.84.0.tar.xz #URL_MD5 893b5203b862eb9bbd08553e24ff146a
+# https://github.com/boostorg/boost/releases/download/boost-1.85.0/boost-1.85.0-cmake.tar.xz
 
 if(UMBA_USE_BOOST OR UMBA_USE_BOOST_FETCH)
 
@@ -15,10 +16,14 @@ if(UMBA_USE_BOOST OR UMBA_USE_BOOST_FETCH)
             endif()
         endif()
 
+        if(NOT UMBA_BOOST_CMAKE_FETCH_URL) # https://github.com/boostorg/boost/releases/download/boost-1.84.0/boost-1.84.0.tar.xz
+            set(UMBA_BOOST_CMAKE_FETCH_URL  "https://github.com/boostorg/boost/releases/download/boost-1.85.0/boost-1.85.0-cmake.tar.xz")
+        endif()
+
         if(NOT UMBA_BOOST_CMAKE_FETCH_URL)
             message(FATAL_ERROR "UMBA_USE_BOOST_FETCH is set, but UMBA_BOOST_CMAKE_FETCH_URL is not set, nor BOOST_CMAKE_FETCH_URL environment variable")
         endif()
-    
+        
         include(FetchContent)
         FetchContent_Declare(
           Boost
