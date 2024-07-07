@@ -1,5 +1,20 @@
 include_guard(GLOBAL)
 
+
+if(NOT PRJ_ROOT)
+    set(PRJ_ROOT "${CMAKE_CURRENT_LIST_DIR}/..")
+endif()
+
+if(PRJ_ROOT)
+    if(NOT LIB_ROOT)
+        set(LIB_ROOT "${PRJ_ROOT}/_libs")
+    endif()
+    if(NOT SRC_ROOT)
+        set(SRC_ROOT "${PRJ_ROOT}/src")
+    endif()
+endif()
+
+
 # set(UMBA_USE_BOOST       ON)
 # set(UMBA_USE_BOOST_FETCH ON)
 # set(UMBA_STATIC_RUNTIME  ON)
