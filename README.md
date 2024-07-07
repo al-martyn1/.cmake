@@ -27,5 +27,9 @@ git submodule update --init --recursive
 Обновляем проект с сабмодулями так:
 ```
 git submodule update --remote
+# или
+git submodule update --recursive --remote
+# или
+git submodule update --init --recursive --remote --merge
 ```
 
