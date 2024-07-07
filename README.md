@@ -1,5 +1,6 @@
 # UMBA CMake (umba.cmake)
 
+  - [Быстрый старт](#user-content-быстрый-старт)
   - [Конфигурационные переменные](#user-content-конфигурационные-переменные)
   - [Функции](#user-content-функции)
     - [Функция umba_add_target_options](#user-content-функция-umba_add_target_options)
@@ -12,6 +13,8 @@
       - [Использование Boost в режиме FetchContent](#user-content-использование-boost-в-режиме-fetchcontent)
   - [Справка по использованию подмодулей](#user-content-справка-по-использованию-подмодулей)
 
+
+# Быстрый старт
 
 Добавление в проект целиком, как подмодуль:
 ```
