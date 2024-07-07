@@ -1,13 +1,22 @@
-# UMBA CMake
+# UMBA CMake (umba.cmake)
 
   - [Замечания по использованию внешних библиотек](#user-content-замечания-по-использованию-внешних-библиотек)
     - [Boost](#user-content-boost)
       - [Boost в режиме header-only](#user-content-boost-в-режиме-header-only)
       - [Настройка системы для использования Boost в режиме header-only](#user-content-настройка-системы-для-использования-boost-в-режиме-header-only)
+      - [Boost в режиме FetchContent](#user-content-boost-в-режиме-fetchcontent)
   - [Справка по использованию подмодулей](#user-content-справка-по-использованию-подмодулей)
 
 
-Добавление в проект: `git submodule add https://github.com/al-martyn1/.cmake.git`
+Добавление в проект целиком, как подмодуль:
+```
+git submodule add https://github.com/al-martyn1/.cmake.git
+```
+
+Добавление в проект только файла `umba.cmake` (находимся в подкаталоге `.cmake` проекта):
+```
+wget https://raw.githubusercontent.com/al-martyn1/.cmake/main/umba.cmake
+```
 
 
 # Замечания по использованию внешних библиотек
@@ -18,6 +27,9 @@
 
 ```cmake
 set(UMBA_USE_BOOST ON)
+
+include(${CMAKE_CURRENT_LIST_DIR}/.cmake/umba.cmake)
+
 ```
 
 ### Boost в режиме header-only
@@ -31,7 +43,7 @@ set(Boost_INCLUDE_DIR "Path/to/boost")
 ```
 
 Можно один раз задать в системе переменную окружения `BOOST_ROOT`, и если 
-переменная `Boost_INCLUDE_DIR` явно не задаётся, то её значение будет получено из
+переменная `Boost_INCLUDE_DIR` явно не задаётся в вашем `CMakeLists.txt`, то её значение будет получено из
 переменной окружения `BOOST_ROOT`.
 
 
@@ -48,15 +60,49 @@ set(Boost_INCLUDE_DIR "Path/to/boost")
 BOOST_ROOT=D:\boost_1_85_0
 ```
 
+### Boost в режиме FetchContent
 
+В данном режиме вся библиотека `Boost` подключается в текущий проект, 
+и к использованию становяться доступны все библиотеки, в т.ч. и те, которые требуют компиляции
+из исходных кодов.
 
-
+Данный режим включается установкой переменной `UMBA_USE_BOOST_FETCH` до включения данного файла:
 ```cmake
-set(UMBA_USE_BOOST       ON)
+set(UMBA_USE_BOOST ON)
 set(UMBA_USE_BOOST_FETCH ON)
-set(UMBA_STATIC_RUNTIME  ON)
-set(UMBA_BOOST_CMAKE_FETCH_URL D:/boost-1.84.0.tar.xz) # https://github.com/boostorg/boost/releases/download/boost-1.84.0/boost-1.84.0.tar.xz #URL_MD5 893b5203b862eb9bbd08553e24ff146a
+
+include(${CMAKE_CURRENT_LIST_DIR}/.cmake/umba.cmake)
 ```
+
+Данный режим тратит довольно много времени на скачивание и конфигурирование библиотеки `Boost` каждый раз
+при генерации сборочных скриптов (до нескольких минут).
+
+В переменной `UMBA_BOOST_CMAKE_FETCH_URL` можно задать адрес архива для скачивания.
+По умолчанию используется `https://github.com/boostorg/boost/releases/download/boost-1.85.0/boost-1.85.0-cmake.tar.xz`.
+
+Если переменная `UMBA_BOOST_CMAKE_FETCH_URL` не задана, производится попытка получить адрес архива из
+переменной окружения `BOOST_CMAKE_FETCH_URL`.
+
+Для того, чтобы исключить обращение к сети при каждой генерации файлов сборки, можно сохранить этот файл локально:
+```
+cd d:
+wget https://github.com/boostorg/boost/releases/download/boost-1.85.0/boost-1.85.0-cmake.tar.xz
+```
+
+После чего задать переменную окружения `BOOST_CMAKE_FETCH_URL`:
+```cmake
+BOOST_CMAKE_FETCH_URL=d:\boost-1.85.0-cmake.tar.xz
+```
+
+Можно явно задать URL архива для режима FetchContent:
+```cmake
+set(UMBA_USE_BOOST ON)
+set(UMBA_USE_BOOST_FETCH ON)
+set(UMBA_BOOST_CMAKE_FETCH_URL "d:/boost-1.85.0-cmake.tar.xz")
+
+include(${CMAKE_CURRENT_LIST_DIR}/.cmake/umba.cmake)
+```
+
 
 
 

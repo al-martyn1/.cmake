@@ -1,8 +1,16 @@
 ---
-Title: UMBA CMake
+Title: UMBA CMake (umba.cmake)
 ---
 
-Добавление в проект: `git submodule add https://github.com/al-martyn1/.cmake.git`
+Добавление в проект целиком, как подмодуль:
+```
+git submodule add https://github.com/al-martyn1/.cmake.git
+```
+
+Добавление в проект только файла `umba.cmake` (находимся в подкаталоге `.cmake` проекта):
+```
+wget https://raw.githubusercontent.com/al-martyn1/.cmake/main/umba.cmake
+```
 
 
 # Замечания по использованию внешних библиотек
