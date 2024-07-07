@@ -1,19 +1,5 @@
 # Функции
 
-## Функция umba_configure_boost
-
-Используется для настройки библиотеки `Boost` в режиме `FetchContent`.
-
-```cmake
-function(umba_configure_boost BOOST_OPTIONS...)
-```
-
-`BOOST_OPTIONS` - опции настройки, могут принимать следующие значения:
- - `STATIC_LIBS` - использовать статические библиотеки;
- - `MULTITHREADED` - использовать многопоточную версию библиотеки;
- - `SINGLETHREADED` - использовать одноопоточную версию библиотеки;
- - `STATIC_RUNTIME` - использовать статически линкуемый C/C++ рантайм.
-
 
 ## Функция umba_add_target_options
 
@@ -47,3 +33,19 @@ function(umba_make_sources_tree SRC_ROOT SRCS HDRS RCSRCS)
  - `RCSRCS` - файлы ресурсов.
 
 Если что-то не задано, то следует вставить пустое значение `""`.
+
+
+## Функция umba_configure_boost
+
+Используется для настройки библиотеки `Boost` в режиме `FetchContent`.
+
+```cmake
+function(umba_configure_boost BOOST_OPTIONS...)
+```
+
+`BOOST_OPTIONS` - опции настройки, могут принимать следующие значения:
+ - `STATIC_LIBS` - использовать статические библиотеки;
+ - `MULTITHREADED` - использовать многопоточную версию библиотеки;
+ - `SINGLETHREADED` - использовать одноопоточную версию библиотеки;
+ - `STATIC_RUNTIME` - использовать статически линкуемый C/C++ рантайм.
+
