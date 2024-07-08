@@ -36,7 +36,7 @@ if(UMBA_USE_BOOST OR UMBA_USE_BOOST_FETCH)
         endif()
 
         if(NOT UMBA_BOOST_CMAKE_FETCH_URL)
-            message(FATAL_ERROR "UMBA_USE_BOOST_FETCH is set, but UMBA_BOOST_CMAKE_FETCH_URL is not set, nor BOOST_CMAKE_FETCH_URL environment variable")
+            message(FATAL_ERROR "UMBA_USE_BOOST_FETCH is set, but UMBA_BOOST_CMAKE_FETCH_URL is not set, nor BOOST_CMAKE_FETCH_URL environment variable. See .cmake/README.md for details how to set up Boost")
         endif()
         
         include(FetchContent)
@@ -56,7 +56,7 @@ if(UMBA_USE_BOOST OR UMBA_USE_BOOST_FETCH)
         endif()
 
         if(NOT Boost_INCLUDE_DIR)
-            message(FATAL_ERROR "UMBA_USE_BOOST is set, but Boost_INCLUDE_DIR is not set, nor BOOST_ROOT environment variable")
+            message(FATAL_ERROR "UMBA_USE_BOOST is set, but Boost_INCLUDE_DIR is not set, nor BOOST_ROOT environment variable. See .cmake/README.md for details how to set up Boost")
         endif()
     
         if(Boost_INCLUDE_DIR)
