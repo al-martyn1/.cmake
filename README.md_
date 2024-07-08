@@ -1,5 +1,6 @@
 ---
 Title: UMBA CMake (umba.cmake)
+Description: Небольшой наборчик костыльных хелперов для CMake
 ---
 
 # Быстрый старт
