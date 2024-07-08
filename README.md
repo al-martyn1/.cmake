@@ -45,7 +45,7 @@ wget https://raw.githubusercontent.com/al-martyn1/.cmake/main/umba.cmake
 function(umba_add_target_options TARGET OPTIONS...)
 ```
 
-`OPTIONS` - опции настройки, могут принимать следующие значения:
+`OPTIONS` - список опций настройки, опции могут принимать следующие значения:
  - `UNICODE` - создавать UNICODE приложение;
  - `CONSOLE` - создавать консольное приложение;
  - `WINDOWS` - создавать оконное приложение;
@@ -79,7 +79,7 @@ function(umba_make_sources_tree SRC_ROOT SRCS HDRS RCSRCS)
 function(umba_configure_boost BOOST_OPTIONS...)
 ```
 
-`BOOST_OPTIONS` - опции настройки, могут принимать следующие значения:
+`BOOST_OPTIONS` - список опций настройки, опции могут принимать следующие значения:
  - `STATIC_LIBS` - использовать статические библиотеки;
  - `MULTITHREADED` - использовать многопоточную версию библиотеки;
  - `SINGLETHREADED` - использовать одноопоточную версию библиотеки;
