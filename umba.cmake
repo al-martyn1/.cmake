@@ -307,6 +307,71 @@ function(umba_add_target_options TARGET)
                 endif()
             endif()
 
+        elseif(${CURARG} STREQUAL "WALL")
+            if(WIN32)
+                if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+                    #message(NOTICE "Add BIGOBJ options for Clang")
+                elseif (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+                    # https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html
+                    target_compile_options(${TARGET} PRIVATE "-Wall")
+                elseif (CMAKE_CXX_COMPILER_ID STREQUAL "Intel")
+                    #message(NOTICE "Add BIGOBJ options for Intel")
+                elseif (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+                    # https://devblogs.microsoft.com/cppblog/broken-warnings-theory/
+                    # https://habr.com/ru/companies/pvs-studio/articles/347686/
+                    # https://learn.microsoft.com/en-us/cpp/build/reference/compiler-option-warning-level?view=msvc-170
+                    target_compile_options(${TARGET} PRIVATE "/Wall" "/external:anglebrackets" "/external:W1")
+                endif()
+            endif()
+
+        elseif(${CURARG} STREQUAL "WPEDANTIC")
+            if(WIN32)
+                if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+                    #message(NOTICE "Add BIGOBJ options for Clang")
+                elseif (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+                    # https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html
+                    target_compile_options(${TARGET} PRIVATE "-Wpedantic")
+                elseif (CMAKE_CXX_COMPILER_ID STREQUAL "Intel")
+                    #message(NOTICE "Add BIGOBJ options for Intel")
+                elseif (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+                    # https://devblogs.microsoft.com/cppblog/broken-warnings-theory/
+                    # https://habr.com/ru/companies/pvs-studio/articles/347686/
+                    # https://learn.microsoft.com/en-us/cpp/build/reference/compiler-option-warning-level?view=msvc-170
+                    target_compile_options(${TARGET} PRIVATE "/W4" "/external:anglebrackets" "/external:W1")
+                endif()
+            endif()
+
+        elseif(${CURARG} STREQUAL "WPERMISSIVE")
+            if(WIN32)
+                if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+                    #message(NOTICE "Add BIGOBJ options for Clang")
+                elseif (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+                    # https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html
+                    target_compile_options(${TARGET} PRIVATE "-fpermissive")
+                elseif (CMAKE_CXX_COMPILER_ID STREQUAL "Intel")
+                    #message(NOTICE "Add BIGOBJ options for Intel")
+                elseif (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+                    # https://devblogs.microsoft.com/cppblog/broken-warnings-theory/
+                    # https://habr.com/ru/companies/pvs-studio/articles/347686/
+                    # https://learn.microsoft.com/en-us/cpp/build/reference/compiler-option-warning-level?view=msvc-170
+                    target_compile_options(${TARGET} PRIVATE "/W2" "/external:anglebrackets" "/external:W1")
+                endif()
+            endif()
+
+        elseif(${CURARG} STREQUAL "WERR")
+            if(WIN32)
+                if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+                    #message(NOTICE "Add BIGOBJ options for Clang")
+                elseif (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+                    # https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html
+                    target_compile_options(${TARGET} PRIVATE "-Werror")
+                elseif (CMAKE_CXX_COMPILER_ID STREQUAL "Intel")
+                    #message(NOTICE "Add BIGOBJ options for Intel")
+                elseif (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+                    target_compile_options(${TARGET} PRIVATE "/WX" "/external:anglebrackets" "/external:W1")
+                endif()
+            endif()
+
         elseif(${CURARG} STREQUAL "STATIC_RUNTIME" OR ${CURARG} STREQUAL "UMBA_STATIC_RUNTIME")
             if(WIN32)
                 # Под винду разве не все компиляторы используют MSVC ABI?
