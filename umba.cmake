@@ -324,41 +324,45 @@ function(umba_add_target_options TARGET)
                 endif()
             endif()
 
-        elseif(${CURARG} STREQUAL "WPEDANTIC")
+        elseif(${CURARG} STREQUAL "PEDANTIC")
             if(WIN32)
                 if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
                     #message(NOTICE "Add BIGOBJ options for Clang")
                 elseif (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
                     # https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html
-                    target_compile_options(${TARGET} PRIVATE "-Wpedantic")
+                    target_compile_options(${TARGET} PRIVATE "-Wpedantic" "-pedantic" "-Werror=pedantic" "-pedantic-errors" "-Wall")
                 elseif (CMAKE_CXX_COMPILER_ID STREQUAL "Intel")
                     #message(NOTICE "Add BIGOBJ options for Intel")
                 elseif (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
                     # https://devblogs.microsoft.com/cppblog/broken-warnings-theory/
                     # https://habr.com/ru/companies/pvs-studio/articles/347686/
                     # https://learn.microsoft.com/en-us/cpp/build/reference/compiler-option-warning-level?view=msvc-170
-                    target_compile_options(${TARGET} PRIVATE "/W4" "/external:anglebrackets" "/external:W1")
+                    # https://learn.microsoft.com/en-us/cpp/build/reference/za-ze-disable-language-extensions?view=msvc-160
+                    # https://learn.microsoft.com/en-us/cpp/build/reference/zc-conformance?view=msvc-170
+                    # https://stackoverflow.com/questions/69575307/microsoft-c-c-what-is-the-definition-of-strict-conformance-w-r-t-implement
+                    target_compile_options(${TARGET} PRIVATE "/Wall" "/permissive-" "/external:anglebrackets" "/external:W0")
+                    # Вопрос - внешние варнинги будут как ошибки при /WX?
                 endif()
             endif()
 
-        elseif(${CURARG} STREQUAL "WPERMISSIVE")
+        elseif(${CURARG} STREQUAL "PERMISSIVE")
             if(WIN32)
                 if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
                     #message(NOTICE "Add BIGOBJ options for Clang")
                 elseif (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
                     # https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html
-                    target_compile_options(${TARGET} PRIVATE "-fpermissive")
+                    target_compile_options(${TARGET} PRIVATE "-fpermissive" )
                 elseif (CMAKE_CXX_COMPILER_ID STREQUAL "Intel")
                     #message(NOTICE "Add BIGOBJ options for Intel")
                 elseif (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
                     # https://devblogs.microsoft.com/cppblog/broken-warnings-theory/
                     # https://habr.com/ru/companies/pvs-studio/articles/347686/
                     # https://learn.microsoft.com/en-us/cpp/build/reference/compiler-option-warning-level?view=msvc-170
-                    target_compile_options(${TARGET} PRIVATE "/W2" "/external:anglebrackets" "/external:W1")
+                    target_compile_options(${TARGET} PRIVATE "/W2" "/permissive" "/external:anglebrackets" "/external:W0")
                 endif()
             endif()
 
-        elseif(${CURARG} STREQUAL "WERR")
+        elseif(${CURARG} STREQUAL "WERR" OR ${CURARG} STREQUAL "WERROR")
             if(WIN32)
                 if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
                     #message(NOTICE "Add BIGOBJ options for Clang")
@@ -368,6 +372,9 @@ function(umba_add_target_options TARGET)
                 elseif (CMAKE_CXX_COMPILER_ID STREQUAL "Intel")
                     #message(NOTICE "Add BIGOBJ options for Intel")
                 elseif (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+                    # https://learn.microsoft.com/ru-ru/cpp/build/reference/permissive-standards-conformance?view=msvc-170
+                    # https://learn.microsoft.com/en-us/cpp/build/reference/permissive-standards-conformance?view=msvc-170
+                    # https://learn.microsoft.com/en-us/cpp/build/reference/compiler-option-warning-level?view=msvc-170
                     target_compile_options(${TARGET} PRIVATE "/WX" "/external:anglebrackets" "/external:W1")
                 endif()
             endif()
