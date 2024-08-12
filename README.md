@@ -194,7 +194,7 @@ git submodule update 
 
 Для автоматической инициализации и подтягивания подмодулей при клонировании проекта можно выполнить:
 ```
-git clone --recurse-submodules YOU_PROJECT_ORIGIN
+git clone --recurse-submodules https://github.com/al-martyn1/.cmake.git
 ```
 
 При обновлении существующего проекта до версии с подмодулями выполняем:
