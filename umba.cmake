@@ -15,6 +15,18 @@ if(PRJ_ROOT)
 endif()
 
 
+# GCC specific global options
+if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+    # using GCC
+    # Наелся говна с GCC, когда забыт return и падает хрен знает где. 
+    # Варнинги GCC в VSCode как-то незаметны, если вообще есть, аналогичные в MSVC как-то сразу видно даже без особых приседаний
+    # Поэтому для GCC данный варнинг включается как ошибка всегда
+    # https://stackoverflow.com/questions/42760220/how-can-i-enforce-an-error-when-a-function-doesnt-have-any-return-in-gcc
+    add_compile_options("-Werror=return-type" ) # Force error if no return statement in non-void function
+endif()
+
+
+
 # set(UMBA_USE_BOOST       ON)
 # set(UMBA_USE_BOOST_FETCH ON)
 # set(UMBA_STATIC_RUNTIME  ON)
