@@ -33,7 +33,14 @@ endif()
 # set(UMBA_BOOST_CMAKE_FETCH_URL D:/boost-1.84.0.tar.xz) # https://github.com/boostorg/boost/releases/download/boost-1.84.0/boost-1.84.0.tar.xz #URL_MD5 893b5203b862eb9bbd08553e24ff146a
 # https://github.com/boostorg/boost/releases/download/boost-1.85.0/boost-1.85.0-cmake.tar.xz
 
-if(UMBA_USE_BOOST OR UMBA_USE_BOOST_FETCH)
+if (UMBA_USE_BOOST_FETCH)
+    set(UMBA_USE_BOOST ON)
+    set(UMBA_USE_BOOST ON PARENT_SCOPE)
+endif()
+
+if(UMBA_USE_BOOST)
+
+    add_compile_definitions("UMBA_USE_BOOST")
 
     if(UMBA_USE_BOOST_FETCH)
 
