@@ -10,7 +10,7 @@ if(PRJ_ROOT)
         set(LIB_ROOT "${PRJ_ROOT}/_libs")
     endif()
     if(NOT SRC_ROOT)
-        set(SRC_ROOT "${PRJ_ROOT}/src")
+        set(SRC_ROOT "${PRJ_ROOT}/_src")
     endif()
 endif()
 
