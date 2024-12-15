@@ -394,7 +394,26 @@ function(umba_add_target_options TARGET)
                     # https://learn.microsoft.com/ru-ru/cpp/build/reference/permissive-standards-conformance?view=msvc-170
                     # https://learn.microsoft.com/en-us/cpp/build/reference/permissive-standards-conformance?view=msvc-170
                     # https://learn.microsoft.com/en-us/cpp/build/reference/compiler-option-warning-level?view=msvc-170
+
                     target_compile_options(${TARGET} PRIVATE "/WX" "/external:anglebrackets" "/external:W1")
+
+                    # !!! Надо разобратся со всеми этими варнингами. Пока дизаблим
+
+                    # warning C4464: exclude warning "relative include path contains '..'"
+                    target_compile_options(${TARGET} PRIVATE "/wd4464")
+
+                    # warning C4820: N bytes padding added after data member 'memberName'
+                    target_compile_options(${TARGET} PRIVATE "/wd4820")
+
+                    # warning C4626: 'TYPE': assignment operator was implicitly defined as deleted
+                    target_compile_options(${TARGET} PRIVATE "/wd4626")
+
+                    # warning C5027: 'TYPE': move assignment operator was implicitly defined as deleted
+                    target_compile_options(${TARGET} PRIVATE "/wd5027")
+
+                    # warning C4435: 'TYPE': Object layout under /vd2 will change due to virtual base 'TYPE_BASE'
+                    target_compile_options(${TARGET} PRIVATE "/wd4435")
+
                 endif()
             endif()
 
