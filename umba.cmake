@@ -414,6 +414,16 @@ function(umba_add_target_options TARGET)
                     # warning C4435: 'TYPE': Object layout under /vd2 will change due to virtual base 'TYPE_BASE'
                     target_compile_options(${TARGET} PRIVATE "/wd4435")
 
+                    # https://learn.microsoft.com/en-us/cpp/error-messages/compiler-warnings/compiler-warning-level-4-c4710?view=msvc-170
+                    # warning C4710: function not inlined
+                    target_compile_options(${TARGET} PRIVATE "/wd4710")
+
+                    # warning C4711: function selected for automatic inline expansion
+                    target_compile_options(${TARGET} PRIVATE "/wd4711")
+
+                    # warning C4738: storing 32-bit float result in memory, possible loss of performance
+                    target_compile_options(${TARGET} PRIVATE "/wd4738")
+
                 endif()
             endif()
 
