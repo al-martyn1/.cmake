@@ -238,42 +238,68 @@ function(umba_add_target_options TARGET)
                 target_compile_definitions(${TARGET} PRIVATE "UNICODE" "_UNICODE")
 
                 if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+
                     message(NOTICE "Add UNICODE options for Clang")
+
                 elseif (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+
                     target_compile_options(${TARGET} PRIVATE "-municode")
+
                 elseif (CMAKE_CXX_COMPILER_ID STREQUAL "Intel")
+
                     message(NOTICE "Add UNICODE options for Intel")
+
                 elseif (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+
                     #message(NOTICE "Add UNICODE options for MSVC")
+
                 endif()
             endif()
 
         elseif(${CURARG} STREQUAL "SRCUTF8" OR ${CURARG} STREQUAL "UTF8SRC" OR ${CURARG} STREQUAL "UTF8_SRC" OR ${CURARG} STREQUAL "SRC_UTF8")
             if(WIN32)
+
                 if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+
                     message(NOTICE "Add SRCUTF8 options for Clang")
+
                 elseif (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+
                     # !!! conversion from UTF-8 to UTF-8 -finput-charset=UTF-8 not supported by iconv
                     # target_compile_options(${TARGET} PRIVATE "-finput-charset=UTF-8")
+
                 elseif (CMAKE_CXX_COMPILER_ID STREQUAL "Intel")
+
                     message(NOTICE "Add SRCUTF8 options for Intel")
+
                 elseif (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+
                     # /utf-8, that sets both /source-charset:utf-8 and /execution-charset:utf-8.
                     target_compile_options(${TARGET} PRIVATE "/source-charset:utf-8")
+
                 endif()
             endif()
 
         elseif(${CURARG} STREQUAL "UTF8")
             if(WIN32)
+
                 if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+
                     message(NOTICE "Add UTF8 options for Clang")
+
                 elseif (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+
                     # !!! conversion from UTF-8 to UTF-8 -finput-charset=UTF-8 not supported by iconv
                     # target_compile_options(${TARGET} PRIVATE "-fexec-charset=UTF-8 -finput-charset=UTF-8")  # https://gcc.gnu.org/onlinedocs/gcc/Option-Summary.html
+
                 elseif (CMAKE_CXX_COMPILER_ID STREQUAL "Intel")
+
                     message(NOTICE "Add UTF8 options for Intel")
+
                 elseif (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+
                     target_compile_options(${TARGET} PRIVATE "/utf-8")
+
                 endif()
             endif()
 
@@ -284,14 +310,22 @@ function(umba_add_target_options TARGET)
                 target_compile_definitions(${TARGET} PRIVATE "CONSOLE" "_CONSOLE")
 
                 if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+
                     message(NOTICE "Add CONSOLE options for Clang")
+
                 elseif (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+
                     target_compile_options(${TARGET} PRIVATE "-mconsole")
                     target_link_options(${TARGET} PRIVATE "-Wl,--subsystem,console")
+
                 elseif (CMAKE_CXX_COMPILER_ID STREQUAL "Intel")
+
                     message(NOTICE "Add CONSOLE options for Intel")
+
                 elseif (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+
                     target_link_options(${TARGET} PRIVATE "/SUBSYSTEM:CONSOLE")
+
                 endif()
             endif()
 
@@ -302,57 +336,91 @@ function(umba_add_target_options TARGET)
                 target_compile_definitions(${TARGET} PRIVATE "WINDOWS" "_WINDOWS")
 
                 if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+
                     message(NOTICE "Add WINDOWS options for Clang")
+
                 elseif (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+
                     target_compile_options(${TARGET} PRIVATE "-mwindows")
                     target_link_options(${TARGET} PRIVATE "-Wl,--subsystem,windows")
+
                 elseif (CMAKE_CXX_COMPILER_ID STREQUAL "Intel")
+
                     message(NOTICE "Add WINDOWS options for Intel")
+
                 elseif (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+
                     target_link_options(${TARGET} PRIVATE "/SUBSYSTEM:WINDOWS")
+
                 endif()
             endif()
 
         elseif(${CURARG} STREQUAL "BIGOBJ")
             if(WIN32)
+
                 if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+
                     message(NOTICE "Add BIGOBJ options for Clang")
+
                 elseif (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+
                     target_compile_options(${TARGET} PRIVATE "-Wa,-mbig-obj")
+
                 elseif (CMAKE_CXX_COMPILER_ID STREQUAL "Intel")
+
                     message(NOTICE "Add BIGOBJ options for Intel")
+
                 elseif (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+
                     target_compile_options(${TARGET} PRIVATE "/bigobj")
+
                 endif()
             endif()
 
         elseif(${CURARG} STREQUAL "WALL")
             if(WIN32)
+
                 if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
-                    #message(NOTICE "Add BIGOBJ options for Clang")
+
+                    #message(NOTICE "Add WALL options for Clang")
+
                 elseif (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+
                     # https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html
                     target_compile_options(${TARGET} PRIVATE "-Wall" "-Wextra")
+
                 elseif (CMAKE_CXX_COMPILER_ID STREQUAL "Intel")
-                    #message(NOTICE "Add BIGOBJ options for Intel")
+
+                    #message(NOTICE "Add WALL options for Intel")
+
                 elseif (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+
                     # https://devblogs.microsoft.com/cppblog/broken-warnings-theory/
                     # https://habr.com/ru/companies/pvs-studio/articles/347686/
                     # https://learn.microsoft.com/en-us/cpp/build/reference/compiler-option-warning-level?view=msvc-170
                     target_compile_options(${TARGET} PRIVATE "/Wall" "/external:anglebrackets" "/external:W1")
+
                 endif()
             endif()
 
-        elseif(${CURARG} STREQUAL "PEDANTIC")
+        elseif(${CURARG} STREQUAL "PEDANTIC") # includes "WALL" options too
             if(WIN32)
+
                 if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
-                    #message(NOTICE "Add BIGOBJ options for Clang")
+
+                    #message(NOTICE "Add PEDANTIC options for Clang")
+
                 elseif (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+
                     # https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html
                     target_compile_options(${TARGET} PRIVATE "-Wpedantic" "-pedantic" "-Werror=pedantic" "-pedantic-errors" "-Wall" "-Wextra")
+
                 elseif (CMAKE_CXX_COMPILER_ID STREQUAL "Intel")
-                    #message(NOTICE "Add BIGOBJ options for Intel")
+
+                    #message(NOTICE "Add PEDANTIC options for Intel")
+
                 elseif (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+
                     # https://devblogs.microsoft.com/cppblog/broken-warnings-theory/
                     # https://habr.com/ru/companies/pvs-studio/articles/347686/
                     # https://learn.microsoft.com/en-us/cpp/build/reference/compiler-option-warning-level?view=msvc-170
@@ -361,36 +429,58 @@ function(umba_add_target_options TARGET)
                     # https://stackoverflow.com/questions/69575307/microsoft-c-c-what-is-the-definition-of-strict-conformance-w-r-t-implement
                     target_compile_options(${TARGET} PRIVATE "/Wall" "/permissive-" "/external:anglebrackets" "/external:W0")
                     # Вопрос - внешние варнинги будут как ошибки при /WX?
+
                 endif()
             endif()
 
         elseif(${CURARG} STREQUAL "PERMISSIVE")
             if(WIN32)
+
                 if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
-                    #message(NOTICE "Add BIGOBJ options for Clang")
+
+                    #message(NOTICE "Add PERMISSIVE options for Clang")
+
                 elseif (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+
                     # https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html
                     target_compile_options(${TARGET} PRIVATE "-fpermissive" )
+
                 elseif (CMAKE_CXX_COMPILER_ID STREQUAL "Intel")
-                    #message(NOTICE "Add BIGOBJ options for Intel")
+
+                    #message(NOTICE "Add PERMISSIVE options for Intel")
+
                 elseif (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+
                     # https://devblogs.microsoft.com/cppblog/broken-warnings-theory/
                     # https://habr.com/ru/companies/pvs-studio/articles/347686/
                     # https://learn.microsoft.com/en-us/cpp/build/reference/compiler-option-warning-level?view=msvc-170
                     target_compile_options(${TARGET} PRIVATE "/W2" "/permissive" "/external:anglebrackets" "/external:W0")
+
                 endif()
             endif()
 
         elseif(${CURARG} STREQUAL "WERR" OR ${CURARG} STREQUAL "WERROR")
             if(WIN32)
+
                 if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
-                    #message(NOTICE "Add BIGOBJ options for Clang")
+
+                    #message(NOTICE "Add WERR options for Clang")
+
                 elseif (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+
                     # https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html
+
                     target_compile_options(${TARGET} PRIVATE "-Werror")
+
+                    # typedef locally defined but not used
+                    target_compile_options(${TARGET} PRIVATE "-Wno-unused-local-typedefs")
+
                 elseif (CMAKE_CXX_COMPILER_ID STREQUAL "Intel")
-                    #message(NOTICE "Add BIGOBJ options for Intel")
+
+                    #message(NOTICE "Add WERR options for Intel")
+
                 elseif (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+
                     # https://learn.microsoft.com/ru-ru/cpp/build/reference/permissive-standards-conformance?view=msvc-170
                     # https://learn.microsoft.com/en-us/cpp/build/reference/permissive-standards-conformance?view=msvc-170
                     # https://learn.microsoft.com/en-us/cpp/build/reference/compiler-option-warning-level?view=msvc-170
@@ -432,18 +522,20 @@ function(umba_add_target_options TARGET)
 
         elseif(${CURARG} STREQUAL "STATIC_RUNTIME" OR ${CURARG} STREQUAL "UMBA_STATIC_RUNTIME")
             if(WIN32)
+
                 # Под винду разве не все компиляторы используют MSVC ABI?
                 set_property(TARGET ${TARGET} PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
 
                 #if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
-                #    message(NOTICE "Add BIGOBJ options for Clang")
+                #    message(NOTICE "Add STATIC_RUNTIME options for Clang")
                 #elseif (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
                 #    target_compile_options(${TARGET} PRIVATE "-Wa,-mbig-obj")
                 #elseif (CMAKE_CXX_COMPILER_ID STREQUAL "Intel")
-                #    message(NOTICE "Add BIGOBJ options for Intel")
+                #    message(NOTICE "Add STATIC_RUNTIME options for Intel")
                 #elseif (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
                 #    set_property(TARGET ${TARGET} PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
                 #endif()
+
             endif()
 
         endif() # if(${CURARG}
