@@ -424,6 +424,9 @@ function(umba_add_target_options TARGET)
                     # warning C4738: storing 32-bit float result in memory, possible loss of performance
                     target_compile_options(${TARGET} PRIVATE "/wd4738")
 
+                    # warning C4866: compiler may not enforce left-to-right evaluation order for call to 'umba::SimpleFormatter::operator<<<std::basic_string<char,std::char_traits<char>,std::allocator<char> > >'
+                    target_compile_options(${TARGET} PRIVATE "/wd4866")
+
                 endif()
             endif()
 
