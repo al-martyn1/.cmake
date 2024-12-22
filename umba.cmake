@@ -515,7 +515,7 @@ function(umba_add_target_options TARGET)
 
             elseif (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
 
-                #target_compile_options(${TARGET} PRIVATE "")
+                target_compile_options(${TARGET} PRIVATE "-Wno-unused-parameter")
 
             elseif (CMAKE_CXX_COMPILER_ID STREQUAL "Intel")
 
