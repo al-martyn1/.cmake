@@ -517,6 +517,9 @@ function(umba_add_target_options TARGET)
                     # warning C4866: compiler may not enforce left-to-right evaluation order for call to 'umba::SimpleFormatter::operator<<<std::basic_string<char,std::char_traits<char>,std::allocator<char> > >'
                     target_compile_options(${TARGET} PRIVATE "/wd4866")
 
+                    # warning C5045: Compiler will insert Spectre mitigation for memory load if /Qspectre switch specified
+                    target_compile_options(${TARGET} PRIVATE "/wd5045")
+
                 endif()
             endif()
 
