@@ -232,75 +232,69 @@ function(umba_add_target_options TARGET)
         endif()
 
         if(${CURARG} STREQUAL "UNICODE")
-            if(WIN32)
 
-                # Common for all
-                target_compile_definitions(${TARGET} PRIVATE "UNICODE" "_UNICODE")
+            # Common for all
+            target_compile_definitions(${TARGET} PRIVATE "UNICODE" "_UNICODE")
 
-                if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+            if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
 
-                    message(NOTICE "Add UNICODE options for Clang")
+                message(NOTICE "Add UNICODE options for Clang")
 
-                elseif (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+            elseif (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
 
-                    target_compile_options(${TARGET} PRIVATE "-municode")
+                target_compile_options(${TARGET} PRIVATE "-municode")
 
-                elseif (CMAKE_CXX_COMPILER_ID STREQUAL "Intel")
+            elseif (CMAKE_CXX_COMPILER_ID STREQUAL "Intel")
 
-                    message(NOTICE "Add UNICODE options for Intel")
+                message(NOTICE "Add UNICODE options for Intel")
 
-                elseif (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+            elseif (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
 
-                    #message(NOTICE "Add UNICODE options for MSVC")
+                #message(NOTICE "Add UNICODE options for MSVC")
 
-                endif()
             endif()
 
         elseif(${CURARG} STREQUAL "SRCUTF8" OR ${CURARG} STREQUAL "UTF8SRC" OR ${CURARG} STREQUAL "UTF8_SRC" OR ${CURARG} STREQUAL "SRC_UTF8")
-            if(WIN32)
 
-                if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+            if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
 
-                    message(NOTICE "Add SRCUTF8 options for Clang")
+                message(NOTICE "Add SRCUTF8 options for Clang")
 
-                elseif (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+            elseif (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
 
-                    # !!! conversion from UTF-8 to UTF-8 -finput-charset=UTF-8 not supported by iconv
-                    # target_compile_options(${TARGET} PRIVATE "-finput-charset=UTF-8")
+                # !!! conversion from UTF-8 to UTF-8 -finput-charset=UTF-8 not supported by iconv
+                # target_compile_options(${TARGET} PRIVATE "-finput-charset=UTF-8")
 
-                elseif (CMAKE_CXX_COMPILER_ID STREQUAL "Intel")
+            elseif (CMAKE_CXX_COMPILER_ID STREQUAL "Intel")
 
-                    message(NOTICE "Add SRCUTF8 options for Intel")
+                message(NOTICE "Add SRCUTF8 options for Intel")
 
-                elseif (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+            elseif (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
 
-                    # /utf-8, that sets both /source-charset:utf-8 and /execution-charset:utf-8.
-                    target_compile_options(${TARGET} PRIVATE "/source-charset:utf-8")
+                # /utf-8, that sets both /source-charset:utf-8 and /execution-charset:utf-8.
+                target_compile_options(${TARGET} PRIVATE "/source-charset:utf-8")
 
-                endif()
             endif()
 
         elseif(${CURARG} STREQUAL "UTF8")
-            if(WIN32)
 
-                if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+            if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
 
-                    message(NOTICE "Add UTF8 options for Clang")
+                message(NOTICE "Add UTF8 options for Clang")
 
-                elseif (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+            elseif (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
 
-                    # !!! conversion from UTF-8 to UTF-8 -finput-charset=UTF-8 not supported by iconv
-                    # target_compile_options(${TARGET} PRIVATE "-fexec-charset=UTF-8 -finput-charset=UTF-8")  # https://gcc.gnu.org/onlinedocs/gcc/Option-Summary.html
+                # !!! conversion from UTF-8 to UTF-8 -finput-charset=UTF-8 not supported by iconv
+                # target_compile_options(${TARGET} PRIVATE "-fexec-charset=UTF-8 -finput-charset=UTF-8")  # https://gcc.gnu.org/onlinedocs/gcc/Option-Summary.html
 
-                elseif (CMAKE_CXX_COMPILER_ID STREQUAL "Intel")
+            elseif (CMAKE_CXX_COMPILER_ID STREQUAL "Intel")
 
-                    message(NOTICE "Add UTF8 options for Intel")
+                message(NOTICE "Add UTF8 options for Intel")
 
-                elseif (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+            elseif (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
 
-                    target_compile_options(${TARGET} PRIVATE "/utf-8")
+                target_compile_options(${TARGET} PRIVATE "/utf-8")
 
-                endif()
             endif()
 
         elseif(${CURARG} STREQUAL "CONSOLE")
@@ -356,171 +350,181 @@ function(umba_add_target_options TARGET)
             endif()
 
         elseif(${CURARG} STREQUAL "BIGOBJ")
-            if(WIN32)
 
-                if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+            if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
 
-                    message(NOTICE "Add BIGOBJ options for Clang")
+                message(NOTICE "Add BIGOBJ options for Clang")
 
-                elseif (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+            elseif (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
 
-                    target_compile_options(${TARGET} PRIVATE "-Wa,-mbig-obj")
+                target_compile_options(${TARGET} PRIVATE "-Wa,-mbig-obj")
 
-                elseif (CMAKE_CXX_COMPILER_ID STREQUAL "Intel")
+            elseif (CMAKE_CXX_COMPILER_ID STREQUAL "Intel")
 
-                    message(NOTICE "Add BIGOBJ options for Intel")
+                message(NOTICE "Add BIGOBJ options for Intel")
 
-                elseif (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+            elseif (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
 
-                    target_compile_options(${TARGET} PRIVATE "/bigobj")
+                target_compile_options(${TARGET} PRIVATE "/bigobj")
 
-                endif()
             endif()
 
         elseif(${CURARG} STREQUAL "WALL")
-            if(WIN32)
 
-                if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+            if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
 
-                    #message(NOTICE "Add WALL options for Clang")
+                #message(NOTICE "Add WALL options for Clang")
 
-                elseif (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+            elseif (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
 
-                    # https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html
-                    target_compile_options(${TARGET} PRIVATE "-Wall" "-Wextra")
+                # https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html
+                target_compile_options(${TARGET} PRIVATE "-Wall" "-Wextra")
 
-                elseif (CMAKE_CXX_COMPILER_ID STREQUAL "Intel")
+            elseif (CMAKE_CXX_COMPILER_ID STREQUAL "Intel")
 
-                    #message(NOTICE "Add WALL options for Intel")
+                #message(NOTICE "Add WALL options for Intel")
 
-                elseif (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+            elseif (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
 
-                    # https://devblogs.microsoft.com/cppblog/broken-warnings-theory/
-                    # https://habr.com/ru/companies/pvs-studio/articles/347686/
-                    # https://learn.microsoft.com/en-us/cpp/build/reference/compiler-option-warning-level?view=msvc-170
-                    target_compile_options(${TARGET} PRIVATE "/Wall" "/external:anglebrackets" "/external:W1")
+                # https://devblogs.microsoft.com/cppblog/broken-warnings-theory/
+                # https://habr.com/ru/companies/pvs-studio/articles/347686/
+                # https://learn.microsoft.com/en-us/cpp/build/reference/compiler-option-warning-level?view=msvc-170
+                target_compile_options(${TARGET} PRIVATE "/Wall" "/external:anglebrackets" "/external:W1")
 
-                endif()
             endif()
 
         elseif(${CURARG} STREQUAL "PEDANTIC") # includes "WALL" options too
-            if(WIN32)
 
-                if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+            if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
 
-                    #message(NOTICE "Add PEDANTIC options for Clang")
+                #message(NOTICE "Add PEDANTIC options for Clang")
 
-                elseif (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+            elseif (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
 
-                    # https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html
-                    target_compile_options(${TARGET} PRIVATE "-Wpedantic" "-pedantic" "-Werror=pedantic" "-pedantic-errors" "-Wall" "-Wextra")
+                # https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html
+                target_compile_options(${TARGET} PRIVATE "-Wpedantic" "-pedantic" "-Werror=pedantic" "-pedantic-errors" "-Wall" "-Wextra")
 
-                elseif (CMAKE_CXX_COMPILER_ID STREQUAL "Intel")
+            elseif (CMAKE_CXX_COMPILER_ID STREQUAL "Intel")
 
-                    #message(NOTICE "Add PEDANTIC options for Intel")
+                #message(NOTICE "Add PEDANTIC options for Intel")
 
-                elseif (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+            elseif (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
 
-                    # https://devblogs.microsoft.com/cppblog/broken-warnings-theory/
-                    # https://habr.com/ru/companies/pvs-studio/articles/347686/
-                    # https://learn.microsoft.com/en-us/cpp/build/reference/compiler-option-warning-level?view=msvc-170
-                    # https://learn.microsoft.com/en-us/cpp/build/reference/za-ze-disable-language-extensions?view=msvc-160
-                    # https://learn.microsoft.com/en-us/cpp/build/reference/zc-conformance?view=msvc-170
-                    # https://stackoverflow.com/questions/69575307/microsoft-c-c-what-is-the-definition-of-strict-conformance-w-r-t-implement
-                    target_compile_options(${TARGET} PRIVATE "/Wall" "/permissive-" "/external:anglebrackets" "/external:W0")
-                    # Вопрос - внешние варнинги будут как ошибки при /WX?
+                # https://devblogs.microsoft.com/cppblog/broken-warnings-theory/
+                # https://habr.com/ru/companies/pvs-studio/articles/347686/
+                # https://learn.microsoft.com/en-us/cpp/build/reference/compiler-option-warning-level?view=msvc-170
+                # https://learn.microsoft.com/en-us/cpp/build/reference/za-ze-disable-language-extensions?view=msvc-160
+                # https://learn.microsoft.com/en-us/cpp/build/reference/zc-conformance?view=msvc-170
+                # https://stackoverflow.com/questions/69575307/microsoft-c-c-what-is-the-definition-of-strict-conformance-w-r-t-implement
+                target_compile_options(${TARGET} PRIVATE "/Wall" "/permissive-" "/external:anglebrackets" "/external:W0")
+                # Вопрос - внешние варнинги будут как ошибки при /WX?
 
-                endif()
             endif()
 
         elseif(${CURARG} STREQUAL "PERMISSIVE")
-            if(WIN32)
 
-                if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+            if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
 
-                    #message(NOTICE "Add PERMISSIVE options for Clang")
+                #message(NOTICE "Add PERMISSIVE options for Clang")
 
-                elseif (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+            elseif (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
 
-                    # https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html
-                    target_compile_options(${TARGET} PRIVATE "-fpermissive" )
+                # https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html
+                target_compile_options(${TARGET} PRIVATE "-fpermissive" )
 
-                elseif (CMAKE_CXX_COMPILER_ID STREQUAL "Intel")
+            elseif (CMAKE_CXX_COMPILER_ID STREQUAL "Intel")
 
-                    #message(NOTICE "Add PERMISSIVE options for Intel")
+                #message(NOTICE "Add PERMISSIVE options for Intel")
 
-                elseif (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+            elseif (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
 
-                    # https://devblogs.microsoft.com/cppblog/broken-warnings-theory/
-                    # https://habr.com/ru/companies/pvs-studio/articles/347686/
-                    # https://learn.microsoft.com/en-us/cpp/build/reference/compiler-option-warning-level?view=msvc-170
-                    target_compile_options(${TARGET} PRIVATE "/W2" "/permissive" "/external:anglebrackets" "/external:W0")
+                # https://devblogs.microsoft.com/cppblog/broken-warnings-theory/
+                # https://habr.com/ru/companies/pvs-studio/articles/347686/
+                # https://learn.microsoft.com/en-us/cpp/build/reference/compiler-option-warning-level?view=msvc-170
+                target_compile_options(${TARGET} PRIVATE "/W2" "/permissive" "/external:anglebrackets" "/external:W0")
 
-                endif()
             endif()
 
         elseif(${CURARG} STREQUAL "WERR" OR ${CURARG} STREQUAL "WERROR")
-            if(WIN32)
 
-                if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+            if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
 
-                    #message(NOTICE "Add WERR options for Clang")
+                #message(NOTICE "Add WERR options for Clang")
 
-                elseif (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+            elseif (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
 
-                    # https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html
+                # https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html
 
-                    target_compile_options(${TARGET} PRIVATE "-Werror")
+                target_compile_options(${TARGET} PRIVATE "-Werror")
 
-                    # typedef locally defined but not used
-                    target_compile_options(${TARGET} PRIVATE "-Wno-unused-local-typedefs")
+                # typedef locally defined but not used
+                target_compile_options(${TARGET} PRIVATE "-Wno-unused-local-typedefs")
 
-                elseif (CMAKE_CXX_COMPILER_ID STREQUAL "Intel")
+            elseif (CMAKE_CXX_COMPILER_ID STREQUAL "Intel")
 
-                    #message(NOTICE "Add WERR options for Intel")
+                #message(NOTICE "Add WERR options for Intel")
 
-                elseif (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+            elseif (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
 
-                    # https://learn.microsoft.com/ru-ru/cpp/build/reference/permissive-standards-conformance?view=msvc-170
-                    # https://learn.microsoft.com/en-us/cpp/build/reference/permissive-standards-conformance?view=msvc-170
-                    # https://learn.microsoft.com/en-us/cpp/build/reference/compiler-option-warning-level?view=msvc-170
+                # https://learn.microsoft.com/ru-ru/cpp/build/reference/permissive-standards-conformance?view=msvc-170
+                # https://learn.microsoft.com/en-us/cpp/build/reference/permissive-standards-conformance?view=msvc-170
+                # https://learn.microsoft.com/en-us/cpp/build/reference/compiler-option-warning-level?view=msvc-170
 
-                    target_compile_options(${TARGET} PRIVATE "/WX" "/external:anglebrackets" "/external:W1")
+                target_compile_options(${TARGET} PRIVATE "/WX" "/external:anglebrackets" "/external:W1")
 
-                    # !!! Надо разобратся со всеми этими варнингами. Пока дизаблим
+                # !!! Надо разобратся со всеми этими варнингами. Пока дизаблим
 
-                    # warning C4464: exclude warning "relative include path contains '..'"
-                    target_compile_options(${TARGET} PRIVATE "/wd4464")
+                # warning C4464: exclude warning "relative include path contains '..'"
+                target_compile_options(${TARGET} PRIVATE "/wd4464")
 
-                    # warning C4820: N bytes padding added after data member 'memberName'
-                    target_compile_options(${TARGET} PRIVATE "/wd4820")
+                # warning C4820: N bytes padding added after data member 'memberName'
+                target_compile_options(${TARGET} PRIVATE "/wd4820")
 
-                    # warning C4626: 'TYPE': assignment operator was implicitly defined as deleted
-                    target_compile_options(${TARGET} PRIVATE "/wd4626")
+                # warning C4626: 'TYPE': assignment operator was implicitly defined as deleted
+                target_compile_options(${TARGET} PRIVATE "/wd4626")
 
-                    # warning C5027: 'TYPE': move assignment operator was implicitly defined as deleted
-                    target_compile_options(${TARGET} PRIVATE "/wd5027")
+                # warning C5027: 'TYPE': move assignment operator was implicitly defined as deleted
+                target_compile_options(${TARGET} PRIVATE "/wd5027")
 
-                    # warning C4435: 'TYPE': Object layout under /vd2 will change due to virtual base 'TYPE_BASE'
-                    target_compile_options(${TARGET} PRIVATE "/wd4435")
+                # warning C4435: 'TYPE': Object layout under /vd2 will change due to virtual base 'TYPE_BASE'
+                target_compile_options(${TARGET} PRIVATE "/wd4435")
 
-                    # https://learn.microsoft.com/en-us/cpp/error-messages/compiler-warnings/compiler-warning-level-4-c4710?view=msvc-170
-                    # warning C4710: function not inlined
-                    target_compile_options(${TARGET} PRIVATE "/wd4710")
+                # https://learn.microsoft.com/en-us/cpp/error-messages/compiler-warnings/compiler-warning-level-4-c4710?view=msvc-170
+                # warning C4710: function not inlined
+                target_compile_options(${TARGET} PRIVATE "/wd4710")
 
-                    # warning C4711: function selected for automatic inline expansion
-                    target_compile_options(${TARGET} PRIVATE "/wd4711")
+                # warning C4711: function selected for automatic inline expansion
+                target_compile_options(${TARGET} PRIVATE "/wd4711")
 
-                    # warning C4738: storing 32-bit float result in memory, possible loss of performance
-                    target_compile_options(${TARGET} PRIVATE "/wd4738")
+                # warning C4738: storing 32-bit float result in memory, possible loss of performance
+                target_compile_options(${TARGET} PRIVATE "/wd4738")
 
-                    # warning C4866: compiler may not enforce left-to-right evaluation order for call to 'umba::SimpleFormatter::operator<<<std::basic_string<char,std::char_traits<char>,std::allocator<char> > >'
-                    target_compile_options(${TARGET} PRIVATE "/wd4866")
+                # warning C4866: compiler may not enforce left-to-right evaluation order for call to 'umba::SimpleFormatter::operator<<<std::basic_string<char,std::char_traits<char>,std::allocator<char> > >'
+                target_compile_options(${TARGET} PRIVATE "/wd4866")
 
-                    # warning C5045: Compiler will insert Spectre mitigation for memory load if /Qspectre switch specified
-                    target_compile_options(${TARGET} PRIVATE "/wd5045")
+                # warning C5045: Compiler will insert Spectre mitigation for memory load if /Qspectre switch specified
+                target_compile_options(${TARGET} PRIVATE "/wd5045")
 
-                endif()
+            endif()
+
+        elseif(${CURARG} STREQUAL "ALLOW_UNUSED")
+
+            if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+
+                message(NOTICE "Add ALLOW_UNUSED options for Clang")
+
+            elseif (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+
+                #target_compile_options(${TARGET} PRIVATE "")
+
+            elseif (CMAKE_CXX_COMPILER_ID STREQUAL "Intel")
+
+                message(NOTICE "Add ALLOW_UNUSED options for Intel")
+
+            elseif (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+
+                target_compile_options(${TARGET} PRIVATE "/wd4100")
+
             endif()
 
         elseif(${CURARG} STREQUAL "STATIC_RUNTIME" OR ${CURARG} STREQUAL "UMBA_STATIC_RUNTIME")
