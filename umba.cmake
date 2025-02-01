@@ -445,6 +445,26 @@ function(umba_add_target_options TARGET)
 
             endif()
 
+        elseif(${CURARG} STREQUAL "NOWARNPACKALIGN")
+
+            if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+
+                #message(NOTICE "Add NOWARNPACKALIGN options for Clang")
+
+            elseif (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+
+                #message(NOTICE "Add NOWARNPACKALIGN options for Clang")
+
+            elseif (CMAKE_CXX_COMPILER_ID STREQUAL "Intel")
+
+                #message(NOTICE "Add NOWARNPACKALIGN options for Intel")
+
+            elseif (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+
+                target_compile_options(${TARGET} PRIVATE "/wd4315")
+
+            endif()
+
         elseif(${CURARG} STREQUAL "WERR" OR ${CURARG} STREQUAL "WERROR")
 
             if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
@@ -504,6 +524,10 @@ function(umba_add_target_options TARGET)
 
                 # warning C5045: Compiler will insert Spectre mitigation for memory load if /Qspectre switch specified
                 target_compile_options(${TARGET} PRIVATE "/wd5045")
+
+                # warning C4810: value of pragma pack(show)
+                # target_compile_options(${TARGET} PRIVATE "/wd4810")
+                
 
             endif()
 
