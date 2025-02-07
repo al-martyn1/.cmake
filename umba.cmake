@@ -378,7 +378,7 @@ function(umba_add_target_options TARGET)
             elseif (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
 
                 # https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html
-                target_compile_options(${TARGET} PRIVATE "-Wall" "-Wextra")
+                target_compile_options(${TARGET} PRIVATE "-Wall" "-Wextra" "-Wimplicit-fallthrough")
 
             elseif (CMAKE_CXX_COMPILER_ID STREQUAL "Intel")
 
