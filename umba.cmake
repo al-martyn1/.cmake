@@ -494,20 +494,20 @@ function(umba_add_target_options TARGET)
 
                 # !!! Надо разобратся со всеми этими варнингами. Пока дизаблим
 
+                # warning C4435: 'TYPE': Object layout under /vd2 will change due to virtual base 'TYPE_BASE'
+                target_compile_options(${TARGET} PRIVATE "/wd4435")
+
                 # warning C4464: exclude warning "relative include path contains '..'"
                 target_compile_options(${TARGET} PRIVATE "/wd4464")
 
-                # warning C4820: N bytes padding added after data member 'memberName'
-                target_compile_options(${TARGET} PRIVATE "/wd4820")
+                # warning C4505: unreferenced function has been removed
+                target_compile_options(${TARGET} PRIVATE "/wd4514")
+
+                # warning C4514: unreferenced inline function has been removed
+                target_compile_options(${TARGET} PRIVATE "/wd4514")
 
                 # warning C4626: 'TYPE': assignment operator was implicitly defined as deleted
                 target_compile_options(${TARGET} PRIVATE "/wd4626")
-
-                # warning C5027: 'TYPE': move assignment operator was implicitly defined as deleted
-                target_compile_options(${TARGET} PRIVATE "/wd5027")
-
-                # warning C4435: 'TYPE': Object layout under /vd2 will change due to virtual base 'TYPE_BASE'
-                target_compile_options(${TARGET} PRIVATE "/wd4435")
 
                 # https://learn.microsoft.com/en-us/cpp/error-messages/compiler-warnings/compiler-warning-level-4-c4710?view=msvc-170
                 # warning C4710: function not inlined
@@ -519,15 +519,20 @@ function(umba_add_target_options TARGET)
                 # warning C4738: storing 32-bit float result in memory, possible loss of performance
                 target_compile_options(${TARGET} PRIVATE "/wd4738")
 
-                # warning C4866: compiler may not enforce left-to-right evaluation order for call to 'umba::SimpleFormatter::operator<<<std::basic_string<char,std::char_traits<char>,std::allocator<char> > >'
-                target_compile_options(${TARGET} PRIVATE "/wd4866")
-
-                # warning C5045: Compiler will insert Spectre mitigation for memory load if /Qspectre switch specified
-                target_compile_options(${TARGET} PRIVATE "/wd5045")
-
                 # warning C4810: value of pragma pack(show)
                 # target_compile_options(${TARGET} PRIVATE "/wd4810")
                 
+                # warning C4820: N bytes padding added after data member 'memberName'
+                target_compile_options(${TARGET} PRIVATE "/wd4820")
+
+                # warning C4866: compiler may not enforce left-to-right evaluation order for call to 'umba::SimpleFormatter::operator<<<std::basic_string<char,std::char_traits<char>,std::allocator<char> > >'
+                target_compile_options(${TARGET} PRIVATE "/wd4866")
+
+                # warning C5027: 'TYPE': move assignment operator was implicitly defined as deleted
+                target_compile_options(${TARGET} PRIVATE "/wd5027")
+
+                # warning C5045: Compiler will insert Spectre mitigation for memory load if /Qspectre switch specified
+                target_compile_options(${TARGET} PRIVATE "/wd5045")
 
             endif()
 
