@@ -357,7 +357,7 @@ function(umba_add_target_options TARGET)
 
             elseif (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
 
-                target_compile_options(${TARGET} PRIVATE "-Wa,-mbig-obj")
+                target_compile_options(${TARGET} PRIVATE "-Wa,-mbig-obj" "-Wl,--large-address-aware")
 
             elseif (CMAKE_CXX_COMPILER_ID STREQUAL "Intel")
 
@@ -367,6 +367,21 @@ function(umba_add_target_options TARGET)
 
                 target_compile_options(${TARGET} PRIVATE "/bigobj")
 
+            endif()
+
+        elseif(${CURARG} STREQUAL "G0")
+            if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+                target_compile_options(${TARGET} PRIVATE "-g0")
+            endif()
+
+        elseif(${CURARG} STREQUAL "G1")
+            if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+                target_compile_options(${TARGET} PRIVATE "-g1")
+            endif()
+
+        elseif(${CURARG} STREQUAL "G3")
+            if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+                target_compile_options(${TARGET} PRIVATE "-g3")
             endif()
 
         elseif(${CURARG} STREQUAL "WALL")
