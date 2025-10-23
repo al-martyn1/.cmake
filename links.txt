@@ -1,0 +1,11 @@
+GCC - Options That Control Optimization
+    https://gcc.gnu.org/onlinedocs/gcc/Optimize-Options.html
+GCC - Options for Debugging Your Program
+    https://gcc.gnu.org/onlinedocs/gcc/Debugging-Options.html
+MinGW Pre-built Toolchains
+    https://www.mingw-w64.org/downloads/
+w64devkit
+    https://github.com/skeeto/w64devkit
+    https://github.com/skeeto/w64devkit/releases
+VSCode - Using GCC with MinGW
+    https://code.visualstudio.com/docs/cpp/config-mingw
