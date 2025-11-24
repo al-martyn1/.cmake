@@ -1,0 +1,17 @@
+Export:
+  Menu: Tools/Import and Export Settings
+  Select "Export selected environment settings"
+  Select "All Settings/Options (...)/Environment (...)/Keyboard"
+
+Import:
+  Menu: Tools/Import and Export Settings
+  Select "Import selected environment settings"
+  Select "No, just import new settings..."
+  Push   "Browse..."
+  Push   "Next >"
+  Push   "Finish"
+
+Команда Project.ProjectDependencies могла быть заменена на:
+  Project.ProjectReferences
+  Project.AddProjectDependency
+  Или полностью удалена, так как управление зависимостями могло быть переработано
