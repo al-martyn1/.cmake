@@ -589,6 +589,14 @@ function(umba_add_target_options TARGET)
 
             endif()
 
+        elseif(${CURARG} STREQUAL "PLIBS" OR ${CURARG} STREQUAL "PLATFORM_LIBS") # basic platform libs
+            if(WIN32) # target is Win32, not host (CMAKE_HOST_WIN32)
+                      # https://cmake.org/cmake/help/book/mastering-cmake/chapter/Cross%20Compiling%20With%20CMake.html
+
+                target_link_libraries(${TARGET} PRIVATE user32 gdi32 kernel32 ws2_32 advapi32 dbghelp iphlpapi shell32)
+
+            endif()
+
         endif() # if(${CURARG}
 
     endforeach()
