@@ -38,6 +38,7 @@ if (UMBA_USE_BOOST_FETCH)
     set(UMBA_USE_BOOST ON PARENT_SCOPE)
 endif()
 
+
 if(UMBA_USE_BOOST)
 
     add_compile_definitions("UMBA_USE_BOOST")
