@@ -22,7 +22,8 @@ if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
     # Варнинги GCC в VSCode как-то незаметны, если вообще есть, аналогичные в MSVC как-то сразу видно даже без особых приседаний
     # Поэтому для GCC данный варнинг включается как ошибка всегда
     # https://stackoverflow.com/questions/42760220/how-can-i-enforce-an-error-when-a-function-doesnt-have-any-return-in-gcc
-    add_compile_options("-Werror=return-type" ) # Force error if no return statement in non-void function
+    # !!! Плохая идея была устанавливать опцию глобально - она попадала в библиотеки, и ломала их сборку. Кривые либы, о что делать
+    # add_compile_options("-Werror=return-type" ) # Force error if no return statement in non-void function
 endif()
 
 
@@ -394,7 +395,7 @@ function(umba_add_target_options TARGET)
             elseif (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
 
                 # https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html
-                target_compile_options(${TARGET} PRIVATE "-Wall" "-Wextra" "-Wimplicit-fallthrough")
+                target_compile_options(${TARGET} PRIVATE "-Wall" "-Wextra" "-Wimplicit-fallthrough" "-Wreturn-type")
 
             elseif (CMAKE_CXX_COMPILER_ID STREQUAL "Intel")
 
@@ -418,7 +419,7 @@ function(umba_add_target_options TARGET)
             elseif (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
 
                 # https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html
-                target_compile_options(${TARGET} PRIVATE "-Wpedantic" "-pedantic" "-Werror=pedantic" "-pedantic-errors" "-Wall" "-Wextra")
+                target_compile_options(${TARGET} PRIVATE "-Wpedantic" "-pedantic" "-Werror=pedantic" "-pedantic-errors" "-Wall" "-Wextra" "-Wreturn-type")
 
             elseif (CMAKE_CXX_COMPILER_ID STREQUAL "Intel")
 
@@ -491,7 +492,7 @@ function(umba_add_target_options TARGET)
 
                 # https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html
 
-                target_compile_options(${TARGET} PRIVATE "-Werror")
+                target_compile_options(${TARGET} PRIVATE "-Werror" -Werror=return-type)
 
                 # typedef locally defined but not used
                 target_compile_options(${TARGET} PRIVATE "-Wno-unused-local-typedefs")
@@ -506,7 +507,7 @@ function(umba_add_target_options TARGET)
                 # https://learn.microsoft.com/en-us/cpp/build/reference/permissive-standards-conformance?view=msvc-170
                 # https://learn.microsoft.com/en-us/cpp/build/reference/compiler-option-warning-level?view=msvc-170
 
-                target_compile_options(${TARGET} PRIVATE "/WX" "/external:anglebrackets" "/external:W1")
+                target_compile_options(${TARGET} PRIVATE "/WX" "/external:anglebrackets" "/external:W0")
 
                 # !!! Надо разобратся со всеми этими варнингами. Пока дизаблим
 
