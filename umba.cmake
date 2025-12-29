@@ -27,7 +27,114 @@ if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
 endif()
 
 
+#----------------------------------------------------------------------------
+if (UMBA_CMAKE_VERBOSE AND UMBA_CMAKE_TRACE)
 
+    if (CMAKE_HOST_WIN32)
+        set(UMBA_PATH_STRING $ENV{PATH})
+        # message(STATUS "${UMBA_PATH_STRING}")
+        string(REPLACE ";" ";" UMBA_CMAKE_VERBOSE_PATH_LIST "${UMBA_PATH_STRING}")
+    else()
+        set(UMBA_PATH_STRING "$ENV{PATH}")
+        string(REPLACE ":" ";" UMBA_CMAKE_VERBOSE_PATH_LIST "${UMBA_PATH_STRING}")
+    endif()
+
+    message(STATUS "===== CMake PATH =====")
+    foreach(UMBA_CMAKE_VERBOSE_PATH_ITEM ${UMBA_CMAKE_VERBOSE_PATH_LIST})
+        message(STATUS "    ${UMBA_CMAKE_VERBOSE_PATH_ITEM}")
+    endforeach()
+    message(STATUS "======================")
+
+endif()
+
+# execute_process(
+#     COMMAND where protoc   # или where protoc на Windows
+#     OUTPUT_VARIABLE PROTOC_PATH
+#     OUTPUT_STRIP_TRAILING_WHITESPACE
+# )
+# message(STATUS "where protoc: ${PROTOC_PATH}")
+
+
+#----------------------------------------------------------------------------
+# Protobuf
+
+# Протобафовский protoc должен быть установлен в системе
+# В данном случае не важно, кросскомпиляция у нас или нет (или важно?)
+find_program(UMBA_PROTOBUF_PROTOC protoc PATHS "$ENV{PROTOC_BIN}" "$ENV{PROTOC_HOME}/bin")
+# https://cmake.org/cmake/help/latest/command/message.html
+
+if (UMBA_CMAKE_VERBOSE)
+    if (NOT UMBA_PROTOBUF_PROTOC)
+        message(NOTICE "Protobuf protoc compiler not found")
+    else()
+        message(STATUS "Found Protobuf protoc compiler: ${UMBA_PROTOBUF_PROTOC}")
+    endif()
+endif()
+
+
+#----------------------------------------------------------------------------
+# https://cmake.org/cmake/help/latest/variable/CMAKE_CROSSCOMPILING.html
+# https://cmake.org/cmake/help/latest/variable/CMAKE_SYSTEM_NAME.html
+# https://cmake.org/cmake/help/latest/variable/CMAKE_HOST_SYSTEM_NAME.html
+
+#----------------------------------------------------------------------------
+# Protobuf grpc_cpp_plugin
+
+# See https://github.com/samoilovv/TinkoffInvestSDK/blob/main/cmake/common.cmake
+
+if (UMBA_USE_GRPC_SUBMODULE)
+    if(CMAKE_CROSSCOMPILING)
+        find_program(GRPC_PROTOC_CPP_PLUGIN_EXECUTABLE grpc_cpp_plugin)
+    else() # Host==Target
+        set(GRPC_PROTOC_CPP_PLUGIN_EXECUTABLE $<TARGET_FILE:grpc_cpp_plugin>)
+        # find_program(GRPC_PROTOC_CPP_PLUGIN_EXECUTABLE grpc_cpp_plugin PATHS "${CMAKE_CURRENT_BINARY_DIR}/grpc" "${LIB_ROOT}/grpc")
+    endif()
+else() # GRPC installed system-wide
+    find_package(gRPC CONFIG REQUIRED)
+    # message(STATUS "Using gRPC ${gRPC_VERSION}")
+    find_program(GRPC_PROTOC_CPP_PLUGIN_EXECUTABLE grpc_cpp_plugin)
+endif()
+
+if (UMBA_CMAKE_VERBOSE)
+    if (NOT GRPC_PROTOC_CPP_PLUGIN_EXECUTABLE)
+        message(NOTICE "GRPC Protobuf protoc compiler plugin not found")
+    else()
+        message(STATUS "GRPC Protobuf protoc compiler plugin : ${GRPC_PROTOC_CPP_PLUGIN_EXECUTABLE}")
+    endif()
+endif()
+
+#----------------------------------------------------------------------------
+function(umba_add_target_protobuf_proto_files_ex
+         TARGET
+         PROTO_FILES_MASK
+         PROTOC_OPTS
+        )
+
+    file(GLOB PROTO_FILES "${PROTO_FILES_MASK}")
+
+    if (UMBA_CMAKE_VERBOSE)
+        message(STATUS "Adding proto files to target: ${TARGET}")
+        foreach(PROTO_FILE ${PROTO_FILES})
+            message(STATUS "  ${PROTO_FILE}")
+        endforeach()
+    endif()
+
+    foreach(tink_proto ${tink_protos})
+
+    # if (UMBA_CMAKE_VERBOSE AND UMBA_CMAKE_TRACE)
+
+    endforeach()
+
+endfunction()
+
+function(umba_add_target_protobuf_proto_files
+         TARGET
+         PROTO_FILES_MASK
+        )
+    umba_add_target_protobuf_proto_files_ex(TARGET PROTO_FILES_MASK)
+endfunction()
+
+#----------------------------------------------------------------------------
 # set(UMBA_USE_BOOST       ON)
 # set(UMBA_USE_BOOST_FETCH ON)
 # set(UMBA_STATIC_RUNTIME  ON)
