@@ -1,6 +1,12 @@
 include_guard(GLOBAL)
 
 
+# UMBA_CMAKE_VERBOSE - Включает детальный лог
+# UMBA_CMAKE_TRACE - Включает максимально детальный лог
+# UMBA_CMAKE_TRACE_ENV_PATH) - включает вывод системной переменной PATH. Также должны быть определены переменные UMBA_CMAKE_VERBOSE и UMBA_CMAKE_TRACE.
+# UMBA_CMAKE_TRACE_UMBA_ADD_TARGET_PROTOBUF_PROTO_FILES - включает трассировку функций umba_add_target_protobuf_proto_files*. . Также должны быть определены переменные UMBA_CMAKE_VERBOSE и UMBA_CMAKE_TRACE.
+
+
 if(NOT PRJ_ROOT)
     set(PRJ_ROOT "${CMAKE_CURRENT_LIST_DIR}/..")
 endif()
@@ -27,8 +33,13 @@ if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
 endif()
 
 
+if (NOT DEFINED UMBA_CMAKE_TRACE_ENV_PATH)
+    set(UMBA_CMAKE_TRACE_ENV_PATH OFF)
+endif()
+
+
 #----------------------------------------------------------------------------
-if (UMBA_CMAKE_VERBOSE AND UMBA_CMAKE_TRACE)
+if (UMBA_CMAKE_VERBOSE AND UMBA_CMAKE_TRACE AND UMBA_CMAKE_TRACE_ENV_PATH)
 
     if (CMAKE_HOST_WIN32)
         set(UMBA_PATH_STRING $ENV{PATH})
@@ -110,16 +121,17 @@ function(umba_add_target_protobuf_proto_files_ex
          PROTOC_OPTS
         )
 
-    file(GLOB PROTO_FILES "${PROTO_FILES_MASK}")
+    file(GLOB PROTO_FILES_BY_MASK "${PROTO_FILES_MASK}")
 
-    if (UMBA_CMAKE_VERBOSE)
-        message(STATUS "Adding proto files to target: ${TARGET}")
-        foreach(PROTO_FILE ${PROTO_FILES})
+    if (UMBA_CMAKE_VERBOSE AND UMBA_CMAKE_TRACE AND UMBA_CMAKE_TRACE_UMBA_ADD_TARGET_PROTOBUF_PROTO_FILES)
+        message(STATUS "=== Adding proto files to target: ${TARGET} ===")
+        foreach(PROTO_FILE ${PROTO_FILES_BY_MASK})
             message(STATUS "  ${PROTO_FILE}")
         endforeach()
+        message(STATUS "===============================================")
     endif()
 
-    foreach(tink_proto ${tink_protos})
+    foreach(PROTO_FILES ${PROTO_FILES_BY_MASK})
 
     # if (UMBA_CMAKE_VERBOSE AND UMBA_CMAKE_TRACE)
 
@@ -131,7 +143,9 @@ function(umba_add_target_protobuf_proto_files
          TARGET
          PROTO_FILES_MASK
         )
-    umba_add_target_protobuf_proto_files_ex(TARGET PROTO_FILES_MASK)
+    # set(FOO) # Создаём пустую переменную
+    # umba_add_target_protobuf_proto_files_ex(${TARGET} ${PROTO_FILES_MASK} ${FOO})
+    umba_add_target_protobuf_proto_files_ex(${TARGET} ${PROTO_FILES_MASK} "")
 endfunction()
 
 #----------------------------------------------------------------------------
