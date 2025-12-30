@@ -8,7 +8,8 @@ include_guard(GLOBAL)
 
 
 if(NOT PRJ_ROOT)
-    set(PRJ_ROOT "${CMAKE_CURRENT_LIST_DIR}/..")
+    # set(PRJ_ROOT "${CMAKE_CURRENT_LIST_DIR}/..")
+    cmake_path(SET PRJ_ROOT NORMALIZE "${CMAKE_CURRENT_LIST_DIR}/..")
 endif()
 
 if(PRJ_ROOT)
@@ -118,6 +119,7 @@ endif()
 function(umba_add_target_protobuf_proto_files_ex
          TARGET
          PROTO_FILES_MASK
+         FILES_ROOT
          PROTOC_OPTS
         )
 
@@ -125,27 +127,51 @@ function(umba_add_target_protobuf_proto_files_ex
 
     if (UMBA_CMAKE_VERBOSE AND UMBA_CMAKE_TRACE AND UMBA_CMAKE_TRACE_UMBA_ADD_TARGET_PROTOBUF_PROTO_FILES)
         message(STATUS "=== Adding proto files to target: ${TARGET} ===")
-        foreach(PROTO_FILE ${PROTO_FILES_BY_MASK})
-            message(STATUS "  ${PROTO_FILE}")
-        endforeach()
-        message(STATUS "===============================================")
     endif()
 
-    foreach(PROTO_FILES ${PROTO_FILES_BY_MASK})
+    foreach(PROTO_FILE ${PROTO_FILES_BY_MASK})
 
-    # if (UMBA_CMAKE_VERBOSE AND UMBA_CMAKE_TRACE)
+        get_filename_component(PROTO_FILE_PATH "${PROTO_FILE}" PATH)
+        file(GLOB PROTO_FILES "${PROTO_FILE}")
+
+        if (UMBA_CMAKE_VERBOSE AND UMBA_CMAKE_TRACE AND UMBA_CMAKE_TRACE_UMBA_ADD_TARGET_PROTOBUF_PROTO_FILES)
+             message(STATUS "  ${PROTO_FILE} (from ${PROTO_FILE_PATH})")
+        endif()
+
+        # string(REPLACE ${PROTO_FILE_PATH} ${CMAKE_CURRENT_BINARY_DIR} OUTPUT_FILE_NAMES "${PROTO_FILES}")
+        string(REPLACE "${FILES_ROOT}/" "${CMAKE_CURRENT_BINARY_DIR}/${TARGET}" OUTPUT_FILE_NAMES "${PROTO_FILES}")
+        string(REPLACE ".proto" ".pb.cc" OUTPUT_PB_SOURCE "${OUTPUT_FILE_NAMES}")
+        string(REPLACE ".proto" ".grpc.pb.cc" OUTPUT_GRPC_SOURCE "${OUTPUT_FILE_NAMES}")
+        string(REPLACE ".proto" ".pb.h" OUTPUT_PB_HEADER "${OUTPUT_FILE_NAMES}")
+        string(REPLACE ".proto" ".grpc.pb.h" OUTPUT_GRPC_HEADER "${OUTPUT_FILE_NAMES}")
+
+        if (UMBA_CMAKE_VERBOSE AND UMBA_CMAKE_TRACE AND UMBA_CMAKE_TRACE_UMBA_ADD_TARGET_PROTOBUF_PROTO_FILES)
+             message(STATUS "    OUTPUT_FILE_NAMES : ${OUTPUT_FILE_NAMES})")
+             message(STATUS "    OUTPUT_PB_SOURCE  : ${OUTPUT_PB_SOURCE})")
+             message(STATUS "    OUTPUT_GRPC_SOURCE: ${OUTPUT_GRPC_SOURCE})")
+             message(STATUS "    OUTPUT_PB_HEADER  : ${OUTPUT_PB_HEADER})")
+             message(STATUS "    OUTPUT_GRPC_HEADER: ${OUTPUT_GRPC_HEADER})")
+        endif()
+
+        file(GLOB PROTO_FILES "${PROTO_FILE}")
 
     endforeach()
 
+    if (UMBA_CMAKE_VERBOSE AND UMBA_CMAKE_TRACE AND UMBA_CMAKE_TRACE_UMBA_ADD_TARGET_PROTOBUF_PROTO_FILES)
+        message(STATUS "===============================================")
+    endif()
+
 endfunction()
 
+#----------------------------------------------------------------------------
 function(umba_add_target_protobuf_proto_files
          TARGET
          PROTO_FILES_MASK
+         FILES_ROOT
         )
     # set(FOO) # Создаём пустую переменную
     # umba_add_target_protobuf_proto_files_ex(${TARGET} ${PROTO_FILES_MASK} ${FOO})
-    umba_add_target_protobuf_proto_files_ex(${TARGET} ${PROTO_FILES_MASK} "")
+    umba_add_target_protobuf_proto_files_ex(${TARGET} ${PROTO_FILES_MASK} ${FILES_ROOT} "")
 endfunction()
 
 #----------------------------------------------------------------------------
