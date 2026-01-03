@@ -7,9 +7,22 @@ include_guard(GLOBAL)
 # UMBA_CMAKE_TRACE_UMBA_ADD_TARGET_PROTOBUF_PROTO_FILES - включает трассировку функций umba_add_target_protobuf_proto_files*. . Также должны быть определены переменные UMBA_CMAKE_VERBOSE и UMBA_CMAKE_TRACE.
 
 
+include("${CMAKE_CURRENT_LIST_DIR}/functions_base.cmake")
+include("${CMAKE_CURRENT_LIST_DIR}/strlib.cmake")
+include("${CMAKE_CURRENT_LIST_DIR}/pathlib.cmake")
+include("${CMAKE_CURRENT_LIST_DIR}/mathlib.cmake")
+
+#----------------------------------------------------------------------------
+
+
+
+#----------------------------------------------------------------------------
 if(NOT PRJ_ROOT)
     # set(PRJ_ROOT "${CMAKE_CURRENT_LIST_DIR}/..")
-    cmake_path(SET PRJ_ROOT NORMALIZE "${CMAKE_CURRENT_LIST_DIR}/..")
+    # cmake_path(SET PRJ_ROOT NORMALIZE "${CMAKE_CURRENT_LIST_DIR}/..")
+    umba_path_normalize("${CMAKE_CURRENT_LIST_DIR}/..")
+    message(STATUS "umbaResult: ${umbaResult}")
+    set(PRJ_ROOT ${umbaResult})
 endif()
 
 if(PRJ_ROOT)
@@ -21,7 +34,7 @@ if(PRJ_ROOT)
     endif()
 endif()
 
-
+#----------------------------------------------------------------------------
 # GCC specific global options
 if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
     # using GCC
@@ -116,7 +129,7 @@ if (UMBA_CMAKE_VERBOSE)
 endif()
 
 #----------------------------------------------------------------------------
-function(umba_add_target_protobuf_proto_files_ex
+function(umba_add_target_protobuf_grpc_proto_files_ex
          TARGET
          PROTO_FILES_MASK
          FILES_ROOT
@@ -132,10 +145,13 @@ function(umba_add_target_protobuf_proto_files_ex
     foreach(PROTO_FILE ${PROTO_FILES_BY_MASK})
 
         get_filename_component(PROTO_FILE_PATH "${PROTO_FILE}" PATH)
+        string(REPLACE "${FILES_ROOT}/" "${CMAKE_CURRENT_BINARY_DIR}/${TARGET}" OUTPUT_PROTO_FILE_PATH "${PROTO_FILE_PATH}")
+
         file(GLOB PROTO_FILES "${PROTO_FILE}")
 
         if (UMBA_CMAKE_VERBOSE AND UMBA_CMAKE_TRACE AND UMBA_CMAKE_TRACE_UMBA_ADD_TARGET_PROTOBUF_PROTO_FILES)
              message(STATUS "  ${PROTO_FILE} (from ${PROTO_FILE_PATH})")
+             message(STATUS "  Output path: ${OUTPUT_PROTO_FILE_PATH})")
         endif()
 
         # string(REPLACE ${PROTO_FILE_PATH} ${CMAKE_CURRENT_BINARY_DIR} OUTPUT_FILE_NAMES "${PROTO_FILES}")
@@ -153,9 +169,118 @@ function(umba_add_target_protobuf_proto_files_ex
              message(STATUS "    OUTPUT_GRPC_HEADER: ${OUTPUT_GRPC_HEADER})")
         endif()
 
-        file(GLOB PROTO_FILES "${PROTO_FILE}")
+        set(str1 "namespace public {")
+        set(repl1 "namespace public_ {")
+        set(str2 "::public::")
+        set(repl2 "::public_::")
+
+        # -IPATH, --proto_path=PATH
+
+        # if (WIN32)
+        if (CMAKE_HOST_WIN32)
+        
+            add_custom_command(
+                  OUTPUT ${OUTPUT_PB_SOURCE} ${OUTPUT_PB_HEADER} ${OUTPUT_GRPC_SOURCE} ${OUTPUT_GRPC_HEADER}
+                  COMMAND ${UMBA_PROTOBUF_PROTOC}
+                  ARGS 
+                    # --grpc_out "${CMAKE_CURRENT_BINARY_DIR}"
+                    --grpc_out "${OUTPUT_PROTO_FILE_PATH}"
+                    # --proto_path ${CMAKE_BINARY_DIR}/_deps/grpc-src/third_party/protobuf/src
+                    # --cpp_out "${CMAKE_CURRENT_BINARY_DIR}"
+                    --cpp_out "${OUTPUT_PROTO_FILE_PATH}"
+                    -I "${PROTO_FILE_PATH}"
+                    ${PROTOC_OPTS}
+                    --plugin=protoc-gen-grpc="${GRPC_PROTOC_CPP_PLUGIN_EXECUTABLE}"
+                    "${PROTO_FILE}"
+                  COMMAND powershell "((Get-Content -path ${OUTPUT_PB_SOURCE} -Raw) -replace '${str1}','${repl1}') | Set-Content -Path ${OUTPUT_PB_SOURCE}"
+                  COMMAND powershell "((Get-Content -path ${OUTPUT_PB_SOURCE} -Raw) -replace '${str2}','${repl2}') | Set-Content -Path ${OUTPUT_PB_SOURCE}"
+                  COMMAND powershell "((Get-Content -path ${OUTPUT_PB_HEADER} -Raw) -replace '${str1}','${repl1}') | Set-Content -Path ${OUTPUT_PB_HEADER}"
+                  COMMAND powershell "((Get-Content -path ${OUTPUT_PB_HEADER} -Raw) -replace '${str2}','${repl2}') | Set-Content -Path ${OUTPUT_PB_HEADER}"
+                  COMMAND powershell "((Get-Content -path ${OUTPUT_GRPC_SOURCE} -Raw) -replace '${str1}','${repl1}') | Set-Content -Path ${OUTPUT_GRPC_SOURCE}"
+                  COMMAND powershell "((Get-Content -path ${OUTPUT_GRPC_SOURCE} -Raw) -replace '${str2}','${repl2}') | Set-Content -Path ${OUTPUT_GRPC_SOURCE}"
+                  COMMAND powershell "((Get-Content -path ${OUTPUT_GRPC_HEADER} -Raw) -replace '${str1}','${repl1}') | Set-Content -Path ${OUTPUT_GRPC_HEADER}"
+                  COMMAND powershell "((Get-Content -path ${OUTPUT_GRPC_HEADER} -Raw) -replace '${str2}','${repl2}') | Set-Content -Path ${OUTPUT_GRPC_HEADER}"
+                  DEPENDS "${PROTO_FILE}")
+
+        else()
+
+            add_custom_command(
+                  OUTPUT ${OUTPUT_PB_SOURCE} ${OUTPUT_PB_HEADER} ${OUTPUT_GRPC_SOURCE} ${OUTPUT_GRPC_HEADER}
+                  COMMAND ${_PROTOBUF_PROTOC}
+                  ARGS --grpc_out "${CMAKE_CURRENT_BINARY_DIR}"
+                    --proto_path ${CMAKE_BINARY_DIR}/_deps/grpc-src/third_party/protobuf/src
+                    --cpp_out "${CMAKE_CURRENT_BINARY_DIR}"
+                    -I "${tink_proto_path}"
+                    --plugin=protoc-gen-grpc="${_GRPC_CPP_PLUGIN_EXECUTABLE}"
+                    "${PROTO_FILE}"
+                  #COMMAND sh ${CMAKE_CURRENT_SOURCE_DIR}/cmake/fix_keywords.sh ${OUTPUT_PB_SOURCE} ${OUTPUT_PB_HEADER} ${OUTPUT_GRPC_SOURCE} ${OUTPUT_GRPC_HEADER}
+                  COMMAND sh "sed -i -- 's/${str1}/${repl1}/g' ${OUTPUT_PB_SOURCE} ${OUTPUT_PB_HEADER} ${OUTPUT_GRPC_SOURCE} ${OUTPUT_GRPC_HEADER}"
+                  COMMAND sh "sed -i -- 's/${str2}/${repl2}/g' ${OUTPUT_PB_SOURCE} ${OUTPUT_PB_HEADER} ${OUTPUT_GRPC_SOURCE} ${OUTPUT_GRPC_HEADER}"
+                  DEPENDS "${PROTO_FILE}")
+
+        endif()
+
+        list(APPEND OUTPUT_PB_SOURCES ${OUTPUT_PB_SOURCE})
+        list(APPEND OUTPUT_PB_HEADERS ${OUTPUT_PB_HEADER})
+        list(APPEND OUTPUT_GRPC_SOURCES ${OUTPUT_GRPC_SOURCE})
+        list(APPEND OUTPUT_GRPC_HEADERS ${OUTPUT_GRPC_HEADER})
 
     endforeach()
+
+    #if (UMBA_CMAKE_VERBOSE AND UMBA_CMAKE_TRACE AND UMBA_CMAKE_TRACE_UMBA_ADD_TARGET_PROTOBUF_PROTO_FILES)
+    #     message(STATUS "OUTPUT_PB_SOURCES    : ${OUTPUT_PB_SOURCES}")
+    #     message(STATUS "OUTPUT_PB_HEADERS    : ${OUTPUT_PB_HEADERS}")
+    #     message(STATUS "OUTPUT_GRPC_SOURCES  : ${OUTPUT_GRPC_SOURCES}")
+    #     message(STATUS "OUTPUT_GRPC_HEADERS  : ${OUTPUT_GRPC_HEADERS}")
+    #endif()
+
+    # string(JOIN <glue> <output_variable> [<input>...])
+    #string(JOIN " " OUTPUT_PB_SOURCES_STR   "${OUTPUT_PB_SOURCES}"  )
+    #string(JOIN " " OUTPUT_PB_HEADERS_STR   "${OUTPUT_PB_HEADERS}"  )
+    #string(JOIN " " OUTPUT_GRPC_SOURCES_STR "${OUTPUT_GRPC_SOURCES}")
+    #string(JOIN " " OUTPUT_GRPC_HEADERS_STR "${OUTPUT_GRPC_HEADERS}")
+
+    #if (UMBA_CMAKE_VERBOSE AND UMBA_CMAKE_TRACE AND UMBA_CMAKE_TRACE_UMBA_ADD_TARGET_PROTOBUF_PROTO_FILES)
+    #     message(STATUS "OUTPUT_PB_SOURCES_STR    : ${OUTPUT_PB_SOURCES_STR}")
+    #     message(STATUS "OUTPUT_PB_HEADERS_STR    : ${OUTPUT_PB_HEADERS_STR}")
+    #     message(STATUS "OUTPUT_GRPC_SOURCES_STR  : ${OUTPUT_GRPC_SOURCES_STR}")
+    #     message(STATUS "OUTPUT_GRPC_HEADERS_STR  : ${OUTPUT_GRPC_HEADERS_STR}")
+    #endif()
+
+
+    # target_sources(${TARGET} "${OUTPUT_PB_SOURCES_STR}"  )
+    # target_sources(${TARGET} "${OUTPUT_PB_HEADERS_STR}"  )
+    # target_sources(${TARGET} "${OUTPUT_GRPC_SOURCES_STR}")
+    # target_sources(${TARGET} "${OUTPUT_GRPC_HEADERS_STR}")
+
+    # target_sources(${TARGET} "${OUTPUT_PB_SOURCES}"  )
+    # target_sources(${TARGET} "${OUTPUT_PB_HEADERS}"  )
+    # target_sources(${TARGET} "${OUTPUT_GRPC_SOURCES}")
+    # target_sources(${TARGET} "${OUTPUT_GRPC_HEADERS}")
+
+    # target_sources(${TARGET}
+    #   "${OUTPUT_PB_SOURCES}"
+    #   "${OUTPUT_PB_HEADERS}"
+    #   "${OUTPUT_GRPC_SOURCES}"
+    #   "${OUTPUT_GRPC_HEADERS}"
+    #   )
+
+    foreach(FILE_PB_SRC ${OUTPUT_PB_SOURCES})
+        target_sources(${TARGET} PUBLIC ${FILE_PB_SRC})
+    endforeach()
+
+    foreach(FILE_PB_HDR ${OUTPUT_PB_HEADERS})
+        target_sources(${TARGET} PUBLIC ${FILE_PB_HDR})
+    endforeach()
+
+    foreach(FILE_PB_GRPC_SRC ${OUTPUT_GRPC_SOURCES})
+        target_sources(${TARGET} PUBLIC ${FILE_PB_GRPC_SRC})
+    endforeach()
+
+    foreach(FILE_PB_GRPC_HDR ${OUTPUT_GRPC_HEADERS})
+        target_sources(${TARGET} PUBLIC ${FILE_PB_GRPC_HDR})
+    endforeach()
+
 
     if (UMBA_CMAKE_VERBOSE AND UMBA_CMAKE_TRACE AND UMBA_CMAKE_TRACE_UMBA_ADD_TARGET_PROTOBUF_PROTO_FILES)
         message(STATUS "===============================================")
@@ -164,14 +289,14 @@ function(umba_add_target_protobuf_proto_files_ex
 endfunction()
 
 #----------------------------------------------------------------------------
-function(umba_add_target_protobuf_proto_files
+function(umba_add_target_protobuf_grpc_proto_files
          TARGET
          PROTO_FILES_MASK
          FILES_ROOT
         )
     # set(FOO) # Создаём пустую переменную
     # umba_add_target_protobuf_proto_files_ex(${TARGET} ${PROTO_FILES_MASK} ${FOO})
-    umba_add_target_protobuf_proto_files_ex(${TARGET} ${PROTO_FILES_MASK} ${FILES_ROOT} "")
+    umba_add_target_protobuf_grpc_proto_files_ex(${TARGET} ${PROTO_FILES_MASK} ${FILES_ROOT} "")
 endfunction()
 
 #----------------------------------------------------------------------------
