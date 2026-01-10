@@ -1,10 +1,13 @@
+cmake_minimum_required(VERSION 3.25)
+
 include_guard(GLOBAL)
 
 
-# UMBA_CMAKE_VERBOSE - Включает детальный лог
-# UMBA_CMAKE_TRACE - Включает максимально детальный лог
-# UMBA_CMAKE_TRACE_ENV_PATH) - включает вывод системной переменной PATH. Также должны быть определены переменные UMBA_CMAKE_VERBOSE и UMBA_CMAKE_TRACE.
+# UMBA_CMAKE_VERBOSE - Включает детальный лог CMake
+# UMBA_CMAKE_TRACE - Включает максимально детальный лог CMake. Не работает без UMBA_CMAKE_VERBOSE# UMBA_CMAKE_TRACE_ENV_PATH) - включает вывод системной переменной PATH. Также должны быть определены переменные UMBA_CMAKE_VERBOSE и UMBA_CMAKE_TRACE.
 # UMBA_CMAKE_TRACE_UMBA_ADD_TARGET_PROTOBUF_PROTO_FILES - включает трассировку функций umba_add_target_protobuf_proto_files*. . Также должны быть определены переменные UMBA_CMAKE_VERBOSE и UMBA_CMAKE_TRACE.
+# UMBA_LIB_ROOT_INCLUDE_DISABLE - запрещение подключения LIB_ROOT в пути поиска подключаемых файлов
+# UMBA_LIB_ROOT_INCLUDE_AS_SYSTEM - подключать содержимое LIB_ROOT как системные инклюды, или как пользовательские. Влияет на строгость проверки качества кода.
 
 
 include("${CMAKE_CURRENT_LIST_DIR}/functions_base.cmake")
@@ -17,11 +20,30 @@ include("${CMAKE_CURRENT_LIST_DIR}/mathlib.cmake")
 
 
 #----------------------------------------------------------------------------
+if(MSVC)
+
+    # set_property(GLOBAL PROPERTY JOB_POOLS umba_custom_job_pool=1)
+
+    # set(CMAKE_JOB_POOLS umba_custom_job_pool=1)
+    # set(CMAKE_JOB_POOL_COMPILE umba_custom_job_pool)
+    # set(CMAKE_JOB_POOL_LINK umba_custom_job_pool)
+
+    # remove_compile_options(/MP)
+    # add_compile_options(/MP1)
+
+endif()
+
+#----------------------------------------------------------------------------
+
+
+
+
+#----------------------------------------------------------------------------
 if(NOT PRJ_ROOT)
     # set(PRJ_ROOT "${CMAKE_CURRENT_LIST_DIR}/..")
     # cmake_path(SET PRJ_ROOT NORMALIZE "${CMAKE_CURRENT_LIST_DIR}/..")
     umba_path_normalize("${CMAKE_CURRENT_LIST_DIR}/..")
-    message(STATUS "umbaResult: ${umbaResult}")
+    # message(STATUS "umbaResult: ${umbaResult}")
     set(PRJ_ROOT ${umbaResult})
 endif()
 
@@ -33,6 +55,18 @@ if(PRJ_ROOT)
         set(SRC_ROOT "${PRJ_ROOT}/_src")
     endif()
 endif()
+
+if (NOT UMBA_LIB_ROOT_INCLUDE_DISABLE)
+    if (NOT UMBA_LIB_ROOT_INCLUDE_AS_SYSTEM)
+        include_directories(${LIB_ROOT})
+    else()
+        include_directories(SYSTEM ${LIB_ROOT})
+    endif()
+endif()
+
+#----------------------------------------------------------------------------
+
+
 
 #----------------------------------------------------------------------------
 # GCC specific global options
@@ -85,8 +119,44 @@ endif()
 
 # Протобафовский protoc должен быть установлен в системе
 # В данном случае не важно, кросскомпиляция у нас или нет (или важно?)
-find_program(UMBA_PROTOBUF_PROTOC protoc PATHS "$ENV{PROTOC_BIN}" "$ENV{PROTOC_HOME}/bin")
-# https://cmake.org/cmake/help/latest/command/message.html
+
+# В C++ исходниках используется макрос PROTOBUF_VERSION для проверки версии
+# Номер немного странный
+# при protoc.exe --version выдающем libprotoc 31.1, PROTOBUF_VERSION равно значению 6031001, 
+# при protoc.exe --version выдающем libprotoc 33.0-rc1 PROTOBUF_VERSION = 6033000
+# Похоже, что 6 - это хз что, а 31001 соответствует версии 31.1, а 33000 - версии 33.0
+
+# Текущий GRPC использует версию 31.1 - https://github.com/protocolbuffers/protobuf/releases/tag/v31.1
+
+
+if (UMBA_PROTOBUF_EXTERN_PROTOC)
+
+    if (NOT UMBA_PROTOBUF_PROTOC_VER_MAJOR)
+        set(UMBA_PROTOBUF_PROTOC_VER_MAJOR 31)
+        if (UMBA_CMAKE_VERBOSE)
+            message(STATUS "Set Protobuf protoc ver major (UMBA_PROTOBUF_PROTOC_VER_MAJOR) to: ${UMBA_PROTOBUF_PROTOC_VER_MAJOR}")
+        endif()
+    endif()
+    
+    if (NOT UMBA_PROTOBUF_PROTOC_VER_MINOR)
+        set(UMBA_PROTOBUF_PROTOC_VER_MINOR 1)
+        if (UMBA_CMAKE_VERBOSE)
+            message(STATUS "Set Protobuf protoc ver major (UMBA_PROTOBUF_PROTOC_VER_MINOR) to: ${UMBA_PROTOBUF_PROTOC_VER_MINOR}")
+        endif()
+    endif()
+
+    # Проверить системные переменные на базе UMBA_PROTOBUF_PROTOC_VER_MAJOR UMBA_PROTOBUF_PROTOC_VER_MINOR - PROTOC_M_N_BIN и PROTOC_M_N
+
+    # https://cmake.org/cmake/help/latest/command/find_program.html
+    find_program(UMBA_PROTOBUF_PROTOC protoc PATHS "$ENV{PROTOC_BIN}" "$ENV{PROTOC_HOME}/bin")
+    # https://cmake.org/cmake/help/latest/command/message.html
+
+else()
+
+    set(UMBA_PROTOBUF_PROTOC $<TARGET_FILE:protobuf::protoc>)
+
+endif()
+
 
 if (UMBA_CMAKE_VERBOSE)
     if (NOT UMBA_PROTOBUF_PROTOC)
@@ -136,16 +206,50 @@ function(umba_add_target_protobuf_grpc_proto_files_ex
          PROTOC_OPTS
         )
 
+    #if(MSVC)
+    if (CMAKE_GENERATOR MATCHES "Visual Studio")
+
+        message(STATUS "Disable parallel jobs using '${CMAKE_GENERATOR}' generator for target '${TARGET}'")
+
+        set_target_properties(${TARGET} PROPERTIES DISABLE_PARALLEL_BUILD TRUE)
+
+        set_target_properties(${TARGET} PROPERTIES
+            VS_GLOBAL_MaxCpuCount 1
+            VS_GLOBAL_EnableParallelBuild false
+            VS_GLOBAL_Parallel 0
+            )
+
+        # # Добавляем кастомные свойства MSBuild для цели
+        # set_target_properties(${TARGET} PROPERTIES
+        #     VS_GLOBAL_<ClCompile>UseMultiToolTask false
+        #     VS_GLOBAL_<Link>UseMultiToolTask false
+        #     VS_GLOBAL_<Lib>UseMultiToolTask false
+        # )
+        
+        # Альтернативно, через макросы:
+        set_target_properties(${TARGET} PROPERTIES
+            VS_GLOBAL_ClCompileUseMultiToolTask false
+            VS_GLOBAL_LinkUseMultiToolTask false
+            VS_GLOBAL_LibUseMultiToolTask false
+        )
+
+    endif()
+
     file(GLOB PROTO_FILES_BY_MASK "${PROTO_FILES_MASK}")
 
     if (UMBA_CMAKE_VERBOSE AND UMBA_CMAKE_TRACE AND UMBA_CMAKE_TRACE_UMBA_ADD_TARGET_PROTOBUF_PROTO_FILES)
         message(STATUS "=== Adding proto files to target: ${TARGET} ===")
     endif()
 
+    set(SRC_PATH_REPLACE_TO "${CMAKE_CURRENT_BINARY_DIR}/proto_generated/${TARGET}")
+
     foreach(PROTO_FILE ${PROTO_FILES_BY_MASK})
 
         get_filename_component(PROTO_FILE_PATH "${PROTO_FILE}" PATH)
-        string(REPLACE "${FILES_ROOT}/" "${CMAKE_CURRENT_BINARY_DIR}/${TARGET}" OUTPUT_PROTO_FILE_PATH "${PROTO_FILE_PATH}")
+        string(REPLACE "${FILES_ROOT}/" "${SRC_PATH_REPLACE_TO}/" OUTPUT_PROTO_FILE_PATH_TMP "${PROTO_FILE_PATH}") # "${CMAKE_CURRENT_BINARY_DIR}/${TARGET}/"
+        umba_path_normalize(${OUTPUT_PROTO_FILE_PATH_TMP})
+        set(OUTPUT_PROTO_FILE_PATH ${umbaResult})
+        target_include_directories(${TARGET} PUBLIC ${OUTPUT_PROTO_FILE_PATH})
 
         file(GLOB PROTO_FILES "${PROTO_FILE}")
 
@@ -155,7 +259,10 @@ function(umba_add_target_protobuf_grpc_proto_files_ex
         endif()
 
         # string(REPLACE ${PROTO_FILE_PATH} ${CMAKE_CURRENT_BINARY_DIR} OUTPUT_FILE_NAMES "${PROTO_FILES}")
-        string(REPLACE "${FILES_ROOT}/" "${CMAKE_CURRENT_BINARY_DIR}/${TARGET}" OUTPUT_FILE_NAMES "${PROTO_FILES}")
+        string(REPLACE "${FILES_ROOT}/" "${SRC_PATH_REPLACE_TO}/" OUTPUT_FILE_NAMES_TMP "${PROTO_FILES}") # "${CMAKE_CURRENT_BINARY_DIR}/${TARGET}/"
+        umba_path_normalize(${OUTPUT_FILE_NAMES_TMP})
+        set(OUTPUT_FILE_NAMES ${umbaResult})
+
         string(REPLACE ".proto" ".pb.cc" OUTPUT_PB_SOURCE "${OUTPUT_FILE_NAMES}")
         string(REPLACE ".proto" ".grpc.pb.cc" OUTPUT_GRPC_SOURCE "${OUTPUT_FILE_NAMES}")
         string(REPLACE ".proto" ".pb.h" OUTPUT_PB_HEADER "${OUTPUT_FILE_NAMES}")
@@ -181,25 +288,33 @@ function(umba_add_target_protobuf_grpc_proto_files_ex
         
             add_custom_command(
                   OUTPUT ${OUTPUT_PB_SOURCE} ${OUTPUT_PB_HEADER} ${OUTPUT_GRPC_SOURCE} ${OUTPUT_GRPC_HEADER}
+                  # COMMAND ${CMAKE_COMMAND} -E echo "Acquiring lock for ${PROTO_FILE}"
+                  # COMMAND ${CMAKE_COMMAND} -E lock "${CMAKE_CURRENT_BINARY_DIR}/proto.lock"
                   COMMAND ${UMBA_PROTOBUF_PROTOC}
                   ARGS 
-                    # --grpc_out "${CMAKE_CURRENT_BINARY_DIR}"
                     --grpc_out "${OUTPUT_PROTO_FILE_PATH}"
-                    # --proto_path ${CMAKE_BINARY_DIR}/_deps/grpc-src/third_party/protobuf/src
-                    # --cpp_out "${CMAKE_CURRENT_BINARY_DIR}"
                     --cpp_out "${OUTPUT_PROTO_FILE_PATH}"
-                    -I "${PROTO_FILE_PATH}"
+                    "-I${PROTO_FILE_PATH}"
                     ${PROTOC_OPTS}
                     --plugin=protoc-gen-grpc="${GRPC_PROTOC_CPP_PLUGIN_EXECUTABLE}"
                     "${PROTO_FILE}"
-                  COMMAND powershell "((Get-Content -path ${OUTPUT_PB_SOURCE} -Raw) -replace '${str1}','${repl1}') | Set-Content -Path ${OUTPUT_PB_SOURCE}"
-                  COMMAND powershell "((Get-Content -path ${OUTPUT_PB_SOURCE} -Raw) -replace '${str2}','${repl2}') | Set-Content -Path ${OUTPUT_PB_SOURCE}"
-                  COMMAND powershell "((Get-Content -path ${OUTPUT_PB_HEADER} -Raw) -replace '${str1}','${repl1}') | Set-Content -Path ${OUTPUT_PB_HEADER}"
-                  COMMAND powershell "((Get-Content -path ${OUTPUT_PB_HEADER} -Raw) -replace '${str2}','${repl2}') | Set-Content -Path ${OUTPUT_PB_HEADER}"
-                  COMMAND powershell "((Get-Content -path ${OUTPUT_GRPC_SOURCE} -Raw) -replace '${str1}','${repl1}') | Set-Content -Path ${OUTPUT_GRPC_SOURCE}"
-                  COMMAND powershell "((Get-Content -path ${OUTPUT_GRPC_SOURCE} -Raw) -replace '${str2}','${repl2}') | Set-Content -Path ${OUTPUT_GRPC_SOURCE}"
-                  COMMAND powershell "((Get-Content -path ${OUTPUT_GRPC_HEADER} -Raw) -replace '${str1}','${repl1}') | Set-Content -Path ${OUTPUT_GRPC_HEADER}"
-                  COMMAND powershell "((Get-Content -path ${OUTPUT_GRPC_HEADER} -Raw) -replace '${str2}','${repl2}') | Set-Content -Path ${OUTPUT_GRPC_HEADER}"
+                  # COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/.cmake/fix_cpp_keywords.cmd "${OUTPUT_PB_SOURCE}"    # cmd /C 
+                  # COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/.cmake/fix_cpp_keywords.cmd "${OUTPUT_PB_HEADER}"    # cmd /C 
+                  # COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/.cmake/fix_cpp_keywords.cmd "${OUTPUT_GRPC_SOURCE}"  # cmd /C 
+                  # COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/.cmake/fix_cpp_keywords.cmd "${OUTPUT_GRPC_HEADER}"  # cmd /C 
+                  #
+                  # COMMAND powershell -ExecutionPolicy Bypass -File ${CMAKE_CURRENT_SOURCE_DIR}/.cmake/fix_cpp_keywords.ps1 "${OUTPUT_PB_SOURCE}"
+                  # COMMAND powershell -ExecutionPolicy Bypass -File ${CMAKE_CURRENT_SOURCE_DIR}/.cmake/fix_cpp_keywords.ps1 "${OUTPUT_PB_HEADER}"
+                  # COMMAND powershell -ExecutionPolicy Bypass -File ${CMAKE_CURRENT_SOURCE_DIR}/.cmake/fix_cpp_keywords.ps1 "${OUTPUT_GRPC_SOURCE}"
+                  # COMMAND powershell -ExecutionPolicy Bypass -File ${CMAKE_CURRENT_SOURCE_DIR}/.cmake/fix_cpp_keywords.ps1 "${OUTPUT_GRPC_HEADER}"
+                  # 
+                  # COMMAND ${CMAKE_COMMAND} -E sleep 0.5
+                  #
+                  COMMAND cmd /C ${CMAKE_CURRENT_SOURCE_DIR}/.cmake/fix_cpp_keywords_for_files.cmd "${OUTPUT_PB_SOURCE}" "${OUTPUT_PB_HEADER}" "${OUTPUT_GRPC_SOURCE}" "${OUTPUT_GRPC_HEADER}"
+                  #
+                  # COMMAND ${CMAKE_COMMAND} -E echo "Releasing lock for ${PROTO_FILE}"
+                  # COMMAND ${CMAKE_COMMAND} -E unlock "${CMAKE_CURRENT_BINARY_DIR}/proto.lock"
+                  #
                   DEPENDS "${PROTO_FILE}")
 
         else()
@@ -213,9 +328,10 @@ function(umba_add_target_protobuf_grpc_proto_files_ex
                     -I "${tink_proto_path}"
                     --plugin=protoc-gen-grpc="${_GRPC_CPP_PLUGIN_EXECUTABLE}"
                     "${PROTO_FILE}"
-                  #COMMAND sh ${CMAKE_CURRENT_SOURCE_DIR}/cmake/fix_keywords.sh ${OUTPUT_PB_SOURCE} ${OUTPUT_PB_HEADER} ${OUTPUT_GRPC_SOURCE} ${OUTPUT_GRPC_HEADER}
-                  COMMAND sh "sed -i -- 's/${str1}/${repl1}/g' ${OUTPUT_PB_SOURCE} ${OUTPUT_PB_HEADER} ${OUTPUT_GRPC_SOURCE} ${OUTPUT_GRPC_HEADER}"
-                  COMMAND sh "sed -i -- 's/${str2}/${repl2}/g' ${OUTPUT_PB_SOURCE} ${OUTPUT_PB_HEADER} ${OUTPUT_GRPC_SOURCE} ${OUTPUT_GRPC_HEADER}"
+                  COMMAND sh ${CMAKE_CURRENT_SOURCE_DIR}/.cmake/fix_cpp_keywords.sh ${OUTPUT_PB_SOURCE}
+                  COMMAND sh ${CMAKE_CURRENT_SOURCE_DIR}/.cmake/fix_cpp_keywords.sh ${OUTPUT_PB_HEADER}
+                  COMMAND sh ${CMAKE_CURRENT_SOURCE_DIR}/.cmake/fix_cpp_keywords.sh ${OUTPUT_GRPC_SOURCE}
+                  COMMAND sh ${CMAKE_CURRENT_SOURCE_DIR}/.cmake/fix_cpp_keywords.sh ${OUTPUT_GRPC_HEADER}
                   DEPENDS "${PROTO_FILE}")
 
         endif()
@@ -266,19 +382,19 @@ function(umba_add_target_protobuf_grpc_proto_files_ex
     #   )
 
     foreach(FILE_PB_SRC ${OUTPUT_PB_SOURCES})
-        target_sources(${TARGET} PUBLIC ${FILE_PB_SRC})
+        target_sources(${TARGET} PRIVATE ${FILE_PB_SRC})
     endforeach()
 
     foreach(FILE_PB_HDR ${OUTPUT_PB_HEADERS})
-        target_sources(${TARGET} PUBLIC ${FILE_PB_HDR})
+        target_sources(${TARGET} PRIVATE ${FILE_PB_HDR})
     endforeach()
 
     foreach(FILE_PB_GRPC_SRC ${OUTPUT_GRPC_SOURCES})
-        target_sources(${TARGET} PUBLIC ${FILE_PB_GRPC_SRC})
+        target_sources(${TARGET} PRIVATE ${FILE_PB_GRPC_SRC})
     endforeach()
 
     foreach(FILE_PB_GRPC_HDR ${OUTPUT_GRPC_HEADERS})
-        target_sources(${TARGET} PUBLIC ${FILE_PB_GRPC_HDR})
+        target_sources(${TARGET} PRIVATE ${FILE_PB_GRPC_HDR})
     endforeach()
 
 
