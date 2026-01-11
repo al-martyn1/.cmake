@@ -241,7 +241,7 @@ function(umba_add_target_protobuf_grpc_proto_files_ex
         message(STATUS "=== Adding proto files to target: ${TARGET} ===")
     endif()
 
-    set(SRC_PATH_REPLACE_TO "${CMAKE_CURRENT_BINARY_DIR}/proto_generated/${TARGET}")
+    set(SRC_PATH_REPLACE_TO "${CMAKE_CURRENT_BINARY_DIR}/_umba_generated_from_proto/${TARGET}")
 
     foreach(PROTO_FILE ${PROTO_FILES_BY_MASK})
 
