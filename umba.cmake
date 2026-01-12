@@ -113,6 +113,51 @@ endif()
 # )
 # message(STATUS "where protoc: ${PROTOC_PATH}")
 
+#----------------------------------------------------------------------------
+
+
+
+#----------------------------------------------------------------------------
+if(DEFINED ENV{UMBA_TOOLS})
+
+    if (UMBA_CMAKE_VERBOSE)
+            message(STATUS "Found environment variable 'UMBA_TOOLS': $ENV{UMBA_TOOLS}") # NOTICE
+    endif()
+
+    find_program(UMBA_SUBST_MACROS_EXECUTABLE umba-subst-macros PATHS "$ENV{UMBA_TOOLS}/bin")
+
+else()
+
+    find_program(UMBA_SUBST_MACROS_EXECUTABLE umba-subst-macros)
+
+endif()
+
+
+if (UMBA_SUBST_MACROS_EXECUTABLE)
+
+    if (UMBA_CMAKE_VERBOSE)
+        message(STATUS "Found umba-subst-macros tool: ${UMBA_SUBST_MACROS_EXECUTABLE}") # NOTICE
+    endif()
+
+    # set(ENV{UMBA_SUBST_MACROS_EXECUTABLE} "${UMBA_SUBST_MACROS_EXECUTABLE}")
+
+else()
+
+    set(UMBA_SUBST_MACROS_EXECUTABLE "") # UMBA_SUBST_MACROS_EXECUTABLE может быть вида *_NOT_FOUND, это тоже FALSE
+
+endif()
+
+
+if(DEFINED ENV{UMBA_SUBST_MACROS_EXECUTABLE})
+
+    if (UMBA_CMAKE_VERBOSE)
+            message(STATUS "Found environment variable 'UMBA_SUBST_MACROS_EXECUTABLE': $ENV{UMBA_SUBST_MACROS_EXECUTABLE}") # NOTICE
+    endif()
+
+endif()
+#----------------------------------------------------------------------------
+
+
 
 #----------------------------------------------------------------------------
 # Protobuf
@@ -322,7 +367,8 @@ function(umba_add_target_protobuf_grpc_proto_files_ex
                   # 
                   # COMMAND ${CMAKE_COMMAND} -E sleep 0.5
                   #
-                  COMMAND cmd /C ${CMAKE_CURRENT_SOURCE_DIR}/.cmake/fix_cpp_keywords_for_files.cmd "${OUTPUT_PB_SOURCE}" "${OUTPUT_PB_HEADER}" "${OUTPUT_GRPC_SOURCE}" "${OUTPUT_GRPC_HEADER}"
+                  COMMAND ${CMAKE_COMMAND} -E env "UMBA_SUBST_MACROS_EXECUTABLE=${UMBA_SUBST_MACROS_EXECUTABLE}" cmd /C ${CMAKE_CURRENT_SOURCE_DIR}/.cmake/fix_cpp_keywords_for_files.cmd "${OUTPUT_PB_SOURCE}" "${OUTPUT_PB_HEADER}" "${OUTPUT_GRPC_SOURCE}" "${OUTPUT_GRPC_HEADER}"
+                  # COMMAND cmd /C ${CMAKE_CURRENT_SOURCE_DIR}/.cmake/fix_cpp_keywords_for_files.cmd "${OUTPUT_PB_SOURCE}" "${OUTPUT_PB_HEADER}" "${OUTPUT_GRPC_SOURCE}" "${OUTPUT_GRPC_HEADER}"
                   #
                   # COMMAND ${CMAKE_COMMAND} -E echo "Releasing lock for ${PROTO_FILE}"
                   # COMMAND ${CMAKE_COMMAND} -E unlock "${CMAKE_CURRENT_BINARY_DIR}/proto.lock"
