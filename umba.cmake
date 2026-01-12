@@ -128,8 +128,15 @@ endif()
 
 # Текущий GRPC использует версию 31.1 - https://github.com/protocolbuffers/protobuf/releases/tag/v31.1
 
+if (UMBA_USE_GRPC AND UMBA_USE_GRPC_SUBMODULE)
+    set(UMBA_PROTOBUF_EXTERN_PROTOC OFF)
+endif()
 
-if (UMBA_PROTOBUF_EXTERN_PROTOC)
+if (UMBA_PROTOBUF_EXTERN_PROTOC OR UMBA_PROTOBUF_PROTOC_VER_MAJOR)
+
+    # Если не установлены UMBA_PROTOBUF_PROTOC_VER_MAJOR и UMBA_PROTOBUF_PROTOC_VER_MINOR
+    # пытаемся найти через системную переменную без номера версии
+    # !!! Доделать
 
     if (NOT UMBA_PROTOBUF_PROTOC_VER_MAJOR)
         set(UMBA_PROTOBUF_PROTOC_VER_MAJOR 31)
@@ -146,6 +153,7 @@ if (UMBA_PROTOBUF_EXTERN_PROTOC)
     endif()
 
     # Проверить системные переменные на базе UMBA_PROTOBUF_PROTOC_VER_MAJOR UMBA_PROTOBUF_PROTOC_VER_MINOR - PROTOC_M_N_BIN и PROTOC_M_N
+    # !!! Доделать
 
     # https://cmake.org/cmake/help/latest/command/find_program.html
     find_program(UMBA_PROTOBUF_PROTOC protoc PATHS "$ENV{PROTOC_BIN}" "$ENV{PROTOC_HOME}/bin")
@@ -177,26 +185,30 @@ endif()
 
 # See https://github.com/samoilovv/TinkoffInvestSDK/blob/main/cmake/common.cmake
 
-if (UMBA_USE_GRPC_SUBMODULE)
-    if(CMAKE_CROSSCOMPILING)
+
+if (UMBA_USE_GRPC)
+    if (UMBA_USE_GRPC_SUBMODULE)
+        if(CMAKE_CROSSCOMPILING)
+            find_program(GRPC_PROTOC_CPP_PLUGIN_EXECUTABLE grpc_cpp_plugin)
+        else() # Host==Target
+            set(GRPC_PROTOC_CPP_PLUGIN_EXECUTABLE $<TARGET_FILE:grpc_cpp_plugin>)
+            # find_program(GRPC_PROTOC_CPP_PLUGIN_EXECUTABLE grpc_cpp_plugin PATHS "${CMAKE_CURRENT_BINARY_DIR}/grpc" "${LIB_ROOT}/grpc")
+        endif()
+    else() # GRPC installed system-wide
+        find_package(gRPC CONFIG REQUIRED)
+        # message(STATUS "Using gRPC ${gRPC_VERSION}")
         find_program(GRPC_PROTOC_CPP_PLUGIN_EXECUTABLE grpc_cpp_plugin)
-    else() # Host==Target
-        set(GRPC_PROTOC_CPP_PLUGIN_EXECUTABLE $<TARGET_FILE:grpc_cpp_plugin>)
-        # find_program(GRPC_PROTOC_CPP_PLUGIN_EXECUTABLE grpc_cpp_plugin PATHS "${CMAKE_CURRENT_BINARY_DIR}/grpc" "${LIB_ROOT}/grpc")
     endif()
-else() # GRPC installed system-wide
-    find_package(gRPC CONFIG REQUIRED)
-    # message(STATUS "Using gRPC ${gRPC_VERSION}")
-    find_program(GRPC_PROTOC_CPP_PLUGIN_EXECUTABLE grpc_cpp_plugin)
+    
+    if (UMBA_CMAKE_VERBOSE)
+        if (NOT GRPC_PROTOC_CPP_PLUGIN_EXECUTABLE)
+            message(NOTICE "GRPC Protobuf protoc compiler plugin not found")
+        else()
+            message(STATUS "GRPC Protobuf protoc compiler plugin : ${GRPC_PROTOC_CPP_PLUGIN_EXECUTABLE}")
+        endif()
+    endif()
 endif()
 
-if (UMBA_CMAKE_VERBOSE)
-    if (NOT GRPC_PROTOC_CPP_PLUGIN_EXECUTABLE)
-        message(NOTICE "GRPC Protobuf protoc compiler plugin not found")
-    else()
-        message(STATUS "GRPC Protobuf protoc compiler plugin : ${GRPC_PROTOC_CPP_PLUGIN_EXECUTABLE}")
-    endif()
-endif()
 
 #----------------------------------------------------------------------------
 function(umba_add_target_protobuf_grpc_proto_files_ex
