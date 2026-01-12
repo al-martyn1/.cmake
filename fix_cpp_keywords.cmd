@@ -8,5 +8,8 @@
 @powershell -File "%~dp0\fix_cpp_keywords.ps1" "%~1"
 @goto END
 :USE_UMBA_SUBST_MACROS
-@"%UMBA_SUBST_MACROS_EXECUTABLE%" --overwrite --raw=1 "-S:namespace public {=namespace public_ {" "-S:::public::=::public_::" "%~1" "%~1"
+@set SUBST_OPTIONS="-S:namespace public {=namespace public_ {"
+@set SUBST_OPTIONS=%SUBST_OPTIONS% "-S:::public::=::public_::"
+@set SUBST_OPTIONS=%SUBST_OPTIONS% "-S:// namespace public=// namespace public_"
+@"%UMBA_SUBST_MACROS_EXECUTABLE%" --overwrite --raw=1 --verbose=quet %SUBST_OPTIONS% "%~1" "%~1"
 :END
