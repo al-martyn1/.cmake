@@ -14,6 +14,8 @@ include("${CMAKE_CURRENT_LIST_DIR}/functions_base.cmake")
 include("${CMAKE_CURRENT_LIST_DIR}/strlib.cmake")
 include("${CMAKE_CURRENT_LIST_DIR}/pathlib.cmake")
 include("${CMAKE_CURRENT_LIST_DIR}/mathlib.cmake")
+include("${CMAKE_CURRENT_LIST_DIR}/vcpkg.cmake")
+
 
 #----------------------------------------------------------------------------
 
