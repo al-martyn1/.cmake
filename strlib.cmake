@@ -8,11 +8,11 @@ include("${CMAKE_CURRENT_LIST_DIR}/mathlib.cmake")
 
 #----------------------------------------------------------------------------
 
-# function(umba_str_len STR)
-# function(umba_str_get_first_char STR)
-# function(umba_str_get_last_char STR)
-# function(umba_str_strip_first_char STR)
-# function(umba_str_strip_last_char STR)
+# function(umba_str_len OUTPUT_VAR STR)
+# function(umba_str_get_first_char OUTPUT_VAR STR)
+# function(umba_str_get_last_char OUTPUT_VAR STR)
+# function(umba_str_strip_first_char OUTPUT_VAR STR)
+# function(umba_str_strip_last_char OUTPUT_VAR STR)
 
 #----------------------------------------------------------------------------
 
@@ -63,20 +63,33 @@ include("${CMAKE_CURRENT_LIST_DIR}/mathlib.cmake")
 
 
 #----------------------------------------------------------------------------
-function(umba_str_len STR)
-    string(LENGTH "${STR}" LENRES)
-    umba_return(${LENRES})
+function(umba_str_len OUTPUT_VAR STR)
+
+    string(LENGTH "${STR}" umbaRes)
+    set(${OUTPUT_VAR} "${umbaRes}" PARENT_SCOPE)
+
 endfunction()
 
 #----------------------------------------------------------------------------
-function(umba_str_substr_be STR BEGIN END)
+function(umba_str_tolower OUTPUT_VAR STR)
+    string(TOLOWER "${STR}" umbaRes)
+    set(${OUTPUT_VAR} "${umbaRes}" PARENT_SCOPE)
+endfunction()
 
-    umba_str_len(${STR})
-    set(strLen ${umbaResult})
+#----------------------------------------------------------------------------
+function(umba_str_toupper OUTPUT_VAR STR)
+    string(TOUPPER "${STR}" umbaRes)
+    set(${OUTPUT_VAR} "${umbaRes}" PARENT_SCOPE)
+endfunction()
+
+#----------------------------------------------------------------------------
+function(umba_str_substr_be OUTPUT_VAR STR BEGIN END)
+
+    umba_str_len(strLen ${STR})
 
     if (${BEGIN} GREATER_EQUAL ${strLen})
 
-        umba_return("")
+        set(${OUTPUT_VAR} "" PARENT_SCOPE)
 
     else()
         
@@ -86,14 +99,13 @@ function(umba_str_substr_be STR BEGIN END)
             set(END_ ${END})
         endif()
 
-        umba_math_eval("${END_} - ${BEGIN}")
-        set(SLEN ${umbaResult})
+        umba_math_eval(SLEN "${END_} - ${BEGIN}")
 
         if (${SLEN} LESS 1)
-            umba_return("")
+            set(${OUTPUT_VAR} "" PARENT_SCOPE)
         else()
-            string(SUBSTRING ${STR} ${BEGIN} ${SLEN} res)
-            umba_return("${res}")
+            string(SUBSTRING ${STR} ${BEGIN} ${SLEN} umbaRes)
+            set(${OUTPUT_VAR} "${umbaRes}" PARENT_SCOPE)
         endif()
 
     endif()
@@ -101,112 +113,101 @@ function(umba_str_substr_be STR BEGIN END)
 endfunction()
 
 #----------------------------------------------------------------------------
-function(umba_str_substr_len STR POS LEN)
+function(umba_str_substr_len OUTPUT_VAR STR POS LEN)
 
-    umba_math_eval("${POS} + ${LEN}")
-    set(END ${umbaResult})
-
-    umba_str_substr_be(${STR} ${POS} ${END} res)
-    umba_return("${res}")
+    umba_math_eval(END "${POS} + ${LEN}")
+    umba_str_substr_be(umbaRes ${STR} ${POS} ${END} res)
+    set(${OUTPUT_VAR} "${umbaRes}" PARENT_SCOPE)
 
 endfunction()
 
 #----------------------------------------------------------------------------
-function(umba_str_get_first_char STR)
+function(umba_str_get_first_char OUTPUT_VAR STR)
 
     if(NOT STR)
-        umba_return("")
+        set(${OUTPUT_VAR} "" PARENT_SCOPE)
     else()
-        # string(SUBSTRING <string> <begin> <length> <out-var>)
-        string(SUBSTRING ${STR} 0 1 res)
-        umba_return("${res}")
+        string(SUBSTRING ${STR} 0 1 umbaRes)
+        set(${OUTPUT_VAR} "${umbaRes}" PARENT_SCOPE)
     endif()
 
 endfunction()
 
 #----------------------------------------------------------------------------
-function(umba_str_get_last_char STR)
+function(umba_str_get_last_char OUTPUT_VAR STR)
 
-    umba_str_len(${STR})
-    set(strLen ${umbaResult})
-    umba_math_eval("${strLen} - 1")
-    set(startPos ${umbaResult})
+    umba_str_len(strLen ${STR})
+    umba_math_eval(startPos "${strLen} - 1")
 
-    umba_str_substr_be(${STR} ${startPos} ${strLen})
-    set(res ${umbaResult})
-    umba_return("${res}")
+    umba_str_substr_be(umbaRes ${STR} ${startPos} ${strLen})
+    set(${OUTPUT_VAR} "${umbaRes}" PARENT_SCOPE)
 
 endfunction()
 
 #----------------------------------------------------------------------------
-function(umba_str_strip_first_char STR)
+function(umba_str_strip_first_char OUTPUT_VAR STR)
 
-    umba_str_len(${STR})
-    set(strLen ${umbaResult})
-    umba_str_substr_be(${STR} 1 ${strLen})
+    umba_str_len(strLen ${STR})
+    umba_str_substr_be(umbaRes ${STR} 1 ${strLen})
     set(res ${umbaResult})
-    umba_return("${res}")
+    set(${OUTPUT_VAR} "${umbaRes}" PARENT_SCOPE)
 
 endfunction()
 
 #----------------------------------------------------------------------------
-function(umba_str_strip_last_char STR)
+function(umba_str_strip_last_char OUTPUT_VAR STR)
 
-    umba_str_len(${STR})
-    set(strLen ${umbaResult})
-    umba_math_eval("${strLen} - 1")
-    set(lenMinus1 ${umbaResult})
-    umba_str_substr_be(${STR} 0 ${lenMinus1})
-    set(res ${umbaResult})
-    umba_return("${res}")
+    umba_str_len(strLen ${STR})
+    umba_math_eval(lenMinus1 "${strLen} - 1")
+    umba_str_substr_be(umbaRes ${STR} 0 ${lenMinus1})
+    set(${OUTPUT_VAR} "${umbaRes}" PARENT_SCOPE)
 
 endfunction()
 
 #----------------------------------------------------------------------------
-function(umba_str_first_char_equ STR CH)
+function(umba_str_first_char_equ OUTPUT_VAR STR CH)
 
-    umba_str_get_first_char(${STR})
-    if(${umbaResult} STREQUAL ${CH})
-        umba_return(TRUE)
+    umba_str_get_first_char(FIRST_CH ${STR})
+    if(${FIRST_CH} STREQUAL ${CH})
+        set(${OUTPUT_VAR} TRUE PARENT_SCOPE)
     else()
-        umba_return(FALSE)
+        set(${OUTPUT_VAR} FALSE PARENT_SCOPE)
     endif()
 
 endfunction()
 
 #----------------------------------------------------------------------------
-function(umba_str_last_char_equ STR CH)
+function(umba_str_last_char_equ OUTPUT_VAR STR CH)
 
-    umba_str_get_last_char(${STR})
-    if(${umbaResult} STREQUAL ${CH})
-        umba_return(TRUE)
+    umba_str_get_last_char(LAST_CH ${STR})
+    if(${LAST_CH} STREQUAL ${CH})
+        set(${OUTPUT_VAR} TRUE PARENT_SCOPE)
     else()
-        umba_return(FALSE)
+        set(${OUTPUT_VAR} FALSE PARENT_SCOPE)
     endif()
 
 endfunction()
 
 #----------------------------------------------------------------------------
-function(umba_str_split_to_chars STR)
+function(umba_str_split_to_chars OUTPUT_VAR STR)
 
-    set(res "")
-    umba_str_len(${STR})
+    set(umbaRes "")
+    # umba_str_len(${STR})
 
     while(NOT "${STR}" STREQUAL "")
 
-        umba_str_get_first_char(${STR})
-        list(APPEND res ${umbaResult})
+        umba_str_get_first_char(FIRST_CH ${STR})
+        list(APPEND umbaRes ${FIRST_CH})
 
         # message(STATUS "FC1: ${umbaResult}")
 
-        umba_str_strip_first_char(${STR})
-        set(STR ${umbaResult})
+        umba_str_strip_first_char(STR ${STR})
 
         # message(STATUS "FC2: ${umbaResult}")
 
     endwhile()
 
-    umba_return("${res}")
+    set(${OUTPUT_VAR} ${umbaResult} PARENT_SCOPE)
 
 endfunction()
 
@@ -221,37 +222,37 @@ function(test_umba_str_get_strip_first_last_char STR)
     message(STATUS "Input  : ${STR}")
     message(STATUS "As chars:")
 
-    umba_str_split_to_chars(${STR})
-    foreach(CH ${umbaResult})
+    umba_str_split_to_chars(umbaRes ${STR})
+    foreach(CH ${umbaRes})
         message(STATUS "  ${CH}")
     endforeach()
 
-    umba_str_len(${STR})
-    message(STATUS "Len    : ${umbaResult}")
+    umba_str_len(umbaRes ${STR})
+    message(STATUS "Len    : ${umbaRes}")
 
-    umba_str_get_first_char(${STR})
-    message(STATUS "FirstCh: ${umbaResult}")
+    umba_str_get_first_char(umbaRes ${STR})
+    message(STATUS "FirstCh: ${umbaRes}")
 
-    umba_str_get_last_char(${STR})
-    message(STATUS "LastCh : ${umbaResult}")
+    umba_str_get_last_char(umbaRes ${STR})
+    message(STATUS "LastCh : ${umbaRes}")
 
-    umba_str_strip_first_char(${STR})
-    message(STATUS "First char stripped: ${umbaResult}")
+    umba_str_strip_first_char(umbaRes ${STR})
+    message(STATUS "First char stripped: ${umbaRes}")
 
-    umba_str_strip_last_char(${STR})
-    message(STATUS "Last char stripped : ${umbaResult}")
+    umba_str_strip_last_char(umbaRes ${STR})
+    message(STATUS "Last char stripped : ${umbaRes}")
 
-    umba_str_first_char_equ(${STR} "0")
-    message(STATUS "First char == 0 : ${umbaResult}")
+    umba_str_first_char_equ(umbaRes ${STR} "0")
+    message(STATUS "First char == 0 : ${umbaRes}")
 
-    umba_str_first_char_equ(${STR} "1")
-    message(STATUS "First char == 1 : ${umbaResult}")
+    umba_str_first_char_equ(umbaRes ${STR} "1")
+    message(STATUS "First char == 1 : ${umbaRes}")
 
-    umba_str_last_char_equ(${STR} "9")
-    message(STATUS "First char == 9 : ${umbaResult}")
+    umba_str_last_char_equ(umbaRes ${STR} "9")
+    message(STATUS "First char == 9 : ${umbaRes}")
 
-    umba_str_last_char_equ(${STR} "1")
-    message(STATUS "Last char == 1  : ${umbaResult}")
+    umba_str_last_char_equ(umbaRes ${STR} "1")
+    message(STATUS "Last char == 1  : ${umbaRes}")
 
 endfunction()
 

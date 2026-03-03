@@ -14,8 +14,20 @@ include("${CMAKE_CURRENT_LIST_DIR}/functions_base.cmake")
 include("${CMAKE_CURRENT_LIST_DIR}/strlib.cmake")
 include("${CMAKE_CURRENT_LIST_DIR}/pathlib.cmake")
 include("${CMAKE_CURRENT_LIST_DIR}/mathlib.cmake")
-include("${CMAKE_CURRENT_LIST_DIR}/vcpkg.cmake")
+# include("${CMAKE_CURRENT_LIST_DIR}/umba_vcpkg.cmake")
 
+
+#----------------------------------------------------------------------------
+
+
+
+#----------------------------------------------------------------------------
+#umba_path_split_pathlist_env_var(VCPKG_OVERLAY_TRIPLETS_PATH_LIST VCPKG_OVERLAY_TRIPLETS)
+#    message(STATUS "===== VCPKG_OVERLAY_TRIPLETS_PATH_LIST =====")
+#    foreach(VCPKG_OVERLAY_TRIPLETS_PATH_LIST_ITEM ${VCPKG_OVERLAY_TRIPLETS_PATH_LIST})
+#        message(STATUS "    ${VCPKG_OVERLAY_TRIPLETS_PATH_LIST_ITEM}")
+#    endforeach()
+#    message(STATUS "======================")
 
 #----------------------------------------------------------------------------
 
@@ -42,28 +54,36 @@ endif()
 
 #----------------------------------------------------------------------------
 if(NOT PRJ_ROOT)
+
     # set(PRJ_ROOT "${CMAKE_CURRENT_LIST_DIR}/..")
     # cmake_path(SET PRJ_ROOT NORMALIZE "${CMAKE_CURRENT_LIST_DIR}/..")
-    umba_path_normalize("${CMAKE_CURRENT_LIST_DIR}/..")
+    umba_path_normalize(PRJ_ROOT "${CMAKE_CURRENT_LIST_DIR}/..")
     # message(STATUS "umbaResult: ${umbaResult}")
-    set(PRJ_ROOT ${umbaResult})
+    set(PRJ_ROOT "${PRJ_ROOT}" ) # PARENT_SCOPE
+
 endif()
 
+
 if(PRJ_ROOT)
+
     if(NOT LIB_ROOT)
         set(LIB_ROOT "${PRJ_ROOT}/_libs")
     endif()
     if(NOT SRC_ROOT)
         set(SRC_ROOT "${PRJ_ROOT}/_src")
     endif()
+
 endif()
 
+
 if (NOT UMBA_LIB_ROOT_INCLUDE_DISABLE)
+
     if (NOT UMBA_LIB_ROOT_INCLUDE_AS_SYSTEM)
         include_directories(${LIB_ROOT})
     else()
         include_directories(SYSTEM ${LIB_ROOT})
     endif()
+
 endif()
 
 #----------------------------------------------------------------------------
@@ -306,7 +326,7 @@ function(umba_add_target_protobuf_grpc_proto_files_ex
 
         get_filename_component(PROTO_FILE_PATH "${PROTO_FILE}" PATH)
         string(REPLACE "${FILES_ROOT}/" "${SRC_PATH_REPLACE_TO}/" OUTPUT_PROTO_FILE_PATH_TMP "${PROTO_FILE_PATH}") # "${CMAKE_CURRENT_BINARY_DIR}/${TARGET}/"
-        umba_path_normalize(${OUTPUT_PROTO_FILE_PATH_TMP})
+        umba_path_normalize(umbaResult ${OUTPUT_PROTO_FILE_PATH_TMP})
         set(OUTPUT_PROTO_FILE_PATH ${umbaResult})
         target_include_directories(${TARGET} PUBLIC ${OUTPUT_PROTO_FILE_PATH})
 
@@ -319,7 +339,7 @@ function(umba_add_target_protobuf_grpc_proto_files_ex
 
         # string(REPLACE ${PROTO_FILE_PATH} ${CMAKE_CURRENT_BINARY_DIR} OUTPUT_FILE_NAMES "${PROTO_FILES}")
         string(REPLACE "${FILES_ROOT}/" "${SRC_PATH_REPLACE_TO}/" OUTPUT_FILE_NAMES_TMP "${PROTO_FILES}") # "${CMAKE_CURRENT_BINARY_DIR}/${TARGET}/"
-        umba_path_normalize(${OUTPUT_FILE_NAMES_TMP})
+        umba_path_normalize(umbaResult ${OUTPUT_FILE_NAMES_TMP})
         set(OUTPUT_FILE_NAMES ${umbaResult})
 
         string(REPLACE ".proto" ".pb.cc" OUTPUT_PB_SOURCE "${OUTPUT_FILE_NAMES}")
@@ -538,6 +558,8 @@ if(UMBA_USE_BOOST)
 endif()
 
 
+
+
 # https://stackoverflow.com/questions/10113017/setting-the-msvc-runtime-in-cmake
 # https://cmake.org/cmake/help/latest/prop_tgt/MSVC_RUNTIME_LIBRARY.html
 # set_property(TARGET foo PROPERTY
@@ -549,14 +571,20 @@ endif()
 
 # linux
 # https://stackoverflow.com/questions/35994339/link-linux-c-application-statically-via-cmake-2-8
-if(UMBA_STATIC_RUNTIME)
-    # For use as ${UMBA_STATIC_RUNTIME} when calling umba_add_target_options
-    set(UMBA_STATIC_RUNTIME "UMBA_STATIC_RUNTIME")
-    set(STATIC_RUNTIME      "STATIC_RUNTIME")
-    set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
-else()
-    message("Default Dynamic runtime used")
-endif()
+
+#----------------------------------------------------------------------------
+include("${CMAKE_CURRENT_LIST_DIR}/umba_runtime_opt_check.cmake")
+
+#----------------------------------------------------------------------------
+
+# if(UMBA_STATIC_RUNTIME)
+#     # For use as ${UMBA_STATIC_RUNTIME} when calling umba_add_target_options
+#     set(UMBA_STATIC_RUNTIME "UMBA_STATIC_RUNTIME")
+#     set(STATIC_RUNTIME      "STATIC_RUNTIME")
+#     set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+# else()
+#     message("Default Dynamic runtime used")
+# endif()
 
 
 ### Boost
