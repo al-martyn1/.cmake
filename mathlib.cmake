@@ -7,9 +7,9 @@ include("${CMAKE_CURRENT_LIST_DIR}/functions_base.cmake")
 
 
 #----------------------------------------------------------------------------
-function(umba_math_eval EVAL_EXPRESSION)
-    math(EXPR evalRes "${EVAL_EXPRESSION}")
-    umba_return(${evalRes})
+function(umba_math_eval OUTPUT_VAR EVAL_EXPRESSION)
+    math(EXPR umbaRes "${EVAL_EXPRESSION}")
+    set(${OUTPUT_VAR} "${umbaRes}" PARENT_SCOPE)
 endfunction()
 
 #----------------------------------------------------------------------------

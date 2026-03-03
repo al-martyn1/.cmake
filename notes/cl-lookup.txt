@@ -1,0 +1,60 @@
+Генераторы для MSVC
+Visual Studio 15 2017
+Visual Studio 16 2019
+Visual Studio 17 2022
+Visual Studio 18 2026
+
+Средства для обнаружения экземпляров Visual Studio и управления ими - 
+  https://learn.microsoft.com/ru-ru/visualstudio/install/tools-for-managing-visual-studio-instances?view=visualstudio
+
+
+dir "C:\Program Files (x86)\Microsoft Visual Studio\Installer\vswhere.exe"
+dir "C:\Program Files\Microsoft Visual Studio\Installer\vswhere.exe"
+
+
+C:\Program Files\Microsoft Visual Studio\18\Community
+C:\Program Files\Microsoft Visual Studio\2022\Community
+C:\Program Files (x86)\Microsoft Visual Studio\2019\Community
+C:\Program Files (x86)\Microsoft Visual Studio\2017\Community
+
+C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\MSVC\14.50.35717
+C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\MSVC\14.16.27023
+C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\MSVC\14.29.30133
+C:\Program Files\Microsoft Visual Studio\18\Community\VC\Tools\MSVC\14.44.35207
+
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\bin\Hostx64\x64
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\bin\Hostx64\x86
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\bin\Hostx86\x64
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.44.35207\bin\Hostx86\x86
+
+find_program(MSVC_2019_CL cl HINTS
+    "C:/Program Files (x86)/Microsoft Visual Studio/2019/Professional/VC/Tools/MSVC/*/bin/Hostx64/x64"
+    "C:/Program Files (x86)/Microsoft Visual Studio/2019/Community/VC/Tools/MSVC/*/bin/Hostx64/x64"
+    "C:/Program Files (x86)/Microsoft Visual Studio/2019/Enterprise/VC/Tools/MSVC/*/bin/Hostx64/x64"
+)
+
+# В триплете x64-windows-static-msvc2019.cmake
+set(VCPKG_PLATFORM_TOOLSET "v142")  # для VS 2019
+
+v140: Visual Studio 2015.
+v141: Visual Studio 2017.
+v142: Visual Studio 2019.
+v143: Visual Studio 2022.
+v144: Visual Studio 2023.
+v145: Visual Studio 2026.
+
+
+Соответствие между версиями Visual Studio и наборами инструментов (Toolset) строится по определенной логике, 
+где начиная с 2015 года мажорная версия инструментов зафиксирована на уровне 14, а меняется только минорный номер.
+
+В старых выпусках номер набора инструментов (Platform Toolset) совпадал с внутренней версией Visual C++:
+v90 — Visual Studio 2008.
+v100 — Visual Studio 2010.
+v110 — Visual Studio 2012.
+v120 — Visual Studio 2013.
+
+VCPKG_PLATFORM_TOOLSET - ключевая переменная для указания версии MSVC:
+v141 - VS 2017
+v142 - VS 2019
+v143 - VS 2022
+v144 - VS 2025 (предварительно)
