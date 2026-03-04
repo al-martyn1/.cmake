@@ -18,4 +18,9 @@ if (UMBA_STATIC_RUNTIME)
     message(STATUC "UMBA: Option UMBA_STATIC_RUNTIME is ON, clear UMBA_DYNAMIC_RUNTIME")
 endif()
 
+if (NOT UMBA_DYNAMIC_RUNTIME AND NOT UMBA_STATIC_RUNTIME)
+    set(UMBA_STATIC_RUNTIME TRUE)
+endif()
+
+
 #----------------------------------------------------------------------------
